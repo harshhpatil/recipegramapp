@@ -4,7 +4,8 @@ import { toggleLike, checkIfLiked } from "../controller/like.controller.js";
 
 const router = express.Router();
 
-router.post("/:postId", authMiddleware, toggleLike);
+// Specific routes should come before parameterized routes
 router.get("/:postId/check", authMiddleware, checkIfLiked);
+router.post("/:postId", authMiddleware, toggleLike);
 
 export default router;

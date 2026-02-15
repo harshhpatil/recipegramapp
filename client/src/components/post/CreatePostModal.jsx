@@ -127,7 +127,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                 Image URL *
               </label>
               <input
-                type="url"
+                type="text"
                 value={image}
                 onChange={handleImageChange}
                 placeholder="https://example.com/image.jpg"
