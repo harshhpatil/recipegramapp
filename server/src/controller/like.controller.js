@@ -2,6 +2,11 @@ import createNotification from "../util/createNotification.js";
 import Like from "../models/Like.model.js";
 import Post from "../models/Post.model.js";
 
+/**
+ * Toggle like on a post (like if not liked, unlike if already liked)
+ * @route POST /likes/:postId
+ * @access Private
+ */
 export const toggleLike = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -47,6 +52,11 @@ export const toggleLike = async (req, res) => {
   }
 };
 
+/**
+ * Check if current user has liked a post
+ * @route GET /likes/:postId/check
+ * @access Private
+ */
 export const checkIfLiked = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -60,5 +70,30 @@ export const checkIfLiked = async (req, res) => {
   } catch (err) {
     console.error("Check if liked error:", err);
     res.status(500).json({ message: "Failed to check like status" });
+  }
+};
+
+/**
+ * Get all users who liked a post
+ * @route GET /likes/:postId
+ * @access Private
+ */
+export const getLikes = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const likes = await Like.find({ post: postId })
+      .populate("user", "username profileImage")
+      .sort({ createdAt: -1 });
+
+    res.json({ likes, count: likes.length });
+  } catch (err) {
+    console.error("Get likes error:", err);
+    res.status(500).json({ message: "Failed to fetch likes" });
   }
 };

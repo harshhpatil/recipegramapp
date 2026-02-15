@@ -36,8 +36,8 @@ export const userService = {
 
 // Post services
 export const postService = {
-  getAllPosts: async (page = 1) => {
-    return await api.get(`/posts?page=${page}`);
+  getAllPosts: async (page = 1, limit = 10) => {
+    return await api.get(`/posts?page=${page}&limit=${limit}`);
   },
 
   getPostById: async (postId) => {
@@ -56,23 +56,41 @@ export const postService = {
     return await api.delete(`/posts/${postId}`);
   },
 
-  getFeed: async (page = 1) => {
-    return await api.get(`/posts/feed?page=${page}`);
+  getFeed: async (page = 1, limit = 10) => {
+    return await api.get(`/posts/feed?page=${page}&limit=${limit}`);
+  },
+
+  searchPosts: async (query, page = 1, limit = 10) => {
+    return await api.get(`/posts/search?q=${query}&page=${page}&limit=${limit}`);
+  },
+
+  getTrendingPosts: async (limit = 10) => {
+    return await api.get(`/posts/trending?limit=${limit}`);
   },
 };
 
 // Like services
 export const likeService = {
+  toggleLike: async (postId) => {
+    return await api.post(`/likes/${postId}`);
+  },
+
+  // Deprecated but kept for backwards compatibility
   likePost: async (postId) => {
     return await api.post(`/likes/${postId}`);
   },
 
+  // Deprecated but kept for backwards compatibility
   unlikePost: async (postId) => {
-    return await api.delete(`/likes/${postId}`);
+    return await api.post(`/likes/${postId}`);
   },
 
   checkIfLiked: async (postId) => {
     return await api.get(`/likes/${postId}/check`);
+  },
+
+  getLikes: async (postId) => {
+    return await api.get(`/likes/${postId}`);
   },
 };
 
@@ -82,8 +100,8 @@ export const commentService = {
     return await api.get(`/comments/${postId}`);
   },
 
-  addComment: async (postId, content) => {
-    return await api.post(`/comments/${postId}`, { content });
+  addComment: async (postId, text) => {
+    return await api.post(`/comments/${postId}`, { text });
   },
 
   deleteComment: async (commentId) => {
@@ -112,16 +130,26 @@ export const followService = {
 
 // Save services
 export const saveService = {
+  toggleSave: async (postId) => {
+    return await api.post(`/save/${postId}`);
+  },
+
+  // Deprecated but kept for backwards compatibility
   savePost: async (postId) => {
     return await api.post(`/save/${postId}`);
   },
 
+  // Deprecated but kept for backwards compatibility
   unsavePost: async (postId) => {
-    return await api.delete(`/save/${postId}`);
+    return await api.post(`/save/${postId}`);
   },
 
-  getSavedPosts: async () => {
-    return await api.get('/save');
+  getSavedPosts: async (page = 1, limit = 10) => {
+    return await api.get(`/save?page=${page}&limit=${limit}`);
+  },
+
+  checkIfSaved: async (postId) => {
+    return await api.get(`/save/${postId}/check`);
   },
 };
 

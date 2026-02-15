@@ -1,38 +1,55 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { usePosts } from '../../hooks';
-import { likeService } from '../../services';
+import { likeService, saveService } from '../../services';
 
 const PostCard = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likesCount || 0);
   const { likePost, unlikePost } = usePosts();
 
   useEffect(() => {
-    // Check if the current user has liked this post
-    const checkLikeStatus = async () => {
+    // Check if the current user has liked and saved this post
+    const checkStatus = async () => {
       try {
-        const response = await likeService.checkIfLiked(post._id);
-        setIsLiked(response.data.isLiked);
+        const [likeResponse, saveResponse] = await Promise.all([
+          likeService.checkIfLiked(post._id),
+          saveService.checkIfSaved(post._id),
+        ]);
+        setIsLiked(likeResponse.data?.isLiked || likeResponse.isLiked || false);
+        setIsSaved(saveResponse.data?.isSaved || saveResponse.isSaved || false);
       } catch (error) {
-        console.error('Error checking like status:', error);
+        console.error('Error checking status:', error);
       }
     };
-    checkLikeStatus();
+    checkStatus();
   }, [post._id]);
 
-  const handleLike = async () => {
+  const handleLike = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     try {
+      await likeService.toggleLike(post._id);
       if (isLiked) {
-        await unlikePost(post._id);
         setLikesCount(prev => prev - 1);
       } else {
-        await likePost(post._id);
         setLikesCount(prev => prev + 1);
       }
       setIsLiked(!isLiked);
     } catch (error) {
       console.error('Error toggling like:', error);
+    }
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await saveService.toggleSave(post._id);
+      setIsSaved(!isSaved);
+    } catch (error) {
+      console.error('Error toggling save:', error);
     }
   };
 
@@ -67,20 +84,32 @@ const PostCard = ({ post }) => {
 
       {/* Post Actions */}
       <div className="p-4">
-        <div className="flex gap-4 mb-3">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex gap-4">
+            <button 
+              onClick={handleLike}
+              className={`hover:text-red-600 ${isLiked ? 'text-red-600' : 'text-gray-700'}`}
+              title={isLiked ? 'Unlike' : 'Like'}
+            >
+              <svg className="w-6 h-6" fill={isLiked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+            <Link to={`/post/${post._id}`} className="hover:text-blue-600" title="Comment">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </Link>
+          </div>
           <button 
-            onClick={handleLike}
-            className={`hover:text-red-600 ${isLiked ? 'text-red-600' : 'text-gray-700'}`}
+            onClick={handleSave}
+            className={`hover:text-yellow-600 ${isSaved ? 'text-yellow-600' : 'text-gray-700'}`}
+            title={isSaved ? 'Unsave' : 'Save'}
           >
-            <svg className="w-6 h-6" fill={isLiked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            <svg className="w-6 h-6" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
           </button>
-          <Link to={`/post/${post._id}`} className="hover:text-blue-600">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </Link>
         </div>
 
         <div className="font-semibold mb-2">

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { usePosts } from '../hooks';
 import PostCard from '../components/post/PostCard';
+import PostCardSkeleton from '../components/common/PostCardSkeleton';
 import CreatePostModal from '../components/post/CreatePostModal';
 
 const Home = () => {
@@ -12,22 +13,6 @@ const Home = () => {
   useEffect(() => {
     fetchPosts(1, true);
   }, []);
-
-  if (loading && posts.length === 0) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl text-red-600">Error: {error}</div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
@@ -43,9 +28,26 @@ const Home = () => {
           Create Post
         </button>
       </div>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          Error: {error}
+        </div>
+      )}
       
-      {posts.length === 0 ? (
+      {loading && posts.length === 0 ? (
+        <div className="space-y-8">
+          <PostCardSkeleton />
+          <PostCardSkeleton />
+          <PostCardSkeleton />
+        </div>
+      ) : posts.length === 0 ? (
         <div className="text-center py-12">
+          <div className="mb-4">
+            <svg className="w-24 h-24 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
           <p className="text-gray-500 text-lg mb-4">No posts yet. Start following users to see their recipes!</p>
           <button
             onClick={() => setIsModalOpen(true)}

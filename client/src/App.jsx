@@ -12,6 +12,7 @@ import PostDetail from './pages/PostDetail';
 import Search from './pages/Search';
 import Explore from './pages/Explore';
 import Messages from './pages/Messages';
+import SavedPosts from './pages/SavedPosts';
 import './index.css';
 
 function App() {
@@ -47,6 +48,11 @@ function App() {
               <Route path="/explore" element={
                 <ProtectedRoute>
                   <Explore />
+                </ProtectedRoute>
+              } />
+              <Route path="/saved" element={
+                <ProtectedRoute>
+                  <SavedPosts />
                 </ProtectedRoute>
               } />
               <Route path="/messages" element={
