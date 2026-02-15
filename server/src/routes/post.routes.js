@@ -4,9 +4,10 @@ import { createPost, getFeed, getAllPosts, getPostById } from "../controller/pos
 
 const router = express.Router();
 
+// Specific routes should come before parameterized routes
 router.post("/", authMiddleware, createPost);
 router.get("/feed", authMiddleware, getFeed);
-router.get("/:id", authMiddleware, getPostById);
 router.get("/", authMiddleware, getAllPosts);
+router.get("/:id", authMiddleware, getPostById);
 
 export default router;
