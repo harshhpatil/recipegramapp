@@ -191,7 +191,7 @@ describe('Post API Endpoints', () => {
       });
 
       const otherToken = jwt.sign(
-        { id: otherUser._id },
+        { userId: otherUser._id },
         process.env.JWT_SECRET || 'test-secret',
         { expiresIn: '7d' }
       );
@@ -233,7 +233,7 @@ describe('Post API Endpoints', () => {
       });
 
       const otherToken = jwt.sign(
-        { id: otherUser._id },
+        { userId: otherUser._id },
         process.env.JWT_SECRET || 'test-secret',
         { expiresIn: '7d' }
       );
