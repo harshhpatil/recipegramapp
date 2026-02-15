@@ -21,7 +21,7 @@ const Profile = () => {
         
         // Fetch user's posts
         const postsResponse = await userService.getUserPosts(response.data._id);
-        setPosts(postsResponse.data);
+        setPosts(postsResponse.data || []);
       } catch (error) {
         dispatch(fetchUserFailure(error.message));
       }

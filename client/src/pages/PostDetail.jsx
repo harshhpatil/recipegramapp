@@ -18,11 +18,14 @@ const PostDetail = () => {
   const [editCaption, setEditCaption] = useState('');
   const [editIngredients, setEditIngredients] = useState('');
   const [editSteps, setEditSteps] = useState('');
+  const [error, setError] = useState(null);
   const { deletePost: deletePostHook } = usePosts();
 
   useEffect(() => {
     const fetchPostDetails = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const [postResponse, commentsResponse, likeResponse] = await Promise.all([
           postService.getPostById(postId),
           commentService.getComments(postId),
@@ -38,6 +41,7 @@ const PostDetail = () => {
         setEditSteps(postData.steps?.join('\n') || '');
       } catch (error) {
         console.error('Error fetching post:', error);
+        setError(error.response?.data?.message || 'Failed to load post');
       } finally {
         setLoading(false);
       }
@@ -50,13 +54,16 @@ const PostDetail = () => {
     try {
       await likeService.toggleLike(postId);
       if (isLiked) {
-        setLikesCount(prev => prev - 1);
+        setLikesCount(prev => Math.max(0, prev - 1));
       } else {
         setLikesCount(prev => prev + 1);
       }
       setIsLiked(!isLiked);
     } catch (error) {
       console.error('Error toggling like:', error);
+      setError(error.response?.data?.message || 'Failed to toggle like');
+      // Clear error after 3 seconds
+      setTimeout(() => setError(null), 3000);
     }
   };
 
@@ -106,6 +113,22 @@ const PostDetail = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <div className="text-xl text-red-600 mb-4">{error}</div>
+          <button
+            onClick={() => window.history.back()}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!post) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -118,6 +141,11 @@ const PostDetail = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <img 
           src={post.image} 

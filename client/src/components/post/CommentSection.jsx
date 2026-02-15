@@ -8,6 +8,9 @@ const CommentSection = ({ postId, comments, setComments }) => {
   const [error, setError] = useState('');
   const { isAuthenticated, user: currentUser } = useSelector((state) => state.auth);
 
+  // Ensure comments is always an array
+  const safeComments = comments || [];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -22,7 +25,10 @@ const CommentSection = ({ postId, comments, setComments }) => {
     setError('');
     try {
       const response = await commentService.addComment(postId, newComment);
-      setComments([response.data.comment, ...comments]);
+      const newCommentData = response.data?.comment || response.comment;
+      if (newCommentData) {
+        setComments([newCommentData, ...safeComments]);
+      }
       setNewComment('');
     } catch (error) {
       console.error('Error adding comment:', error);
@@ -37,7 +43,7 @@ const CommentSection = ({ postId, comments, setComments }) => {
 
     try {
       await commentService.deleteComment(commentId);
-      setComments(comments.filter(c => c._id !== commentId));
+      setComments(safeComments.filter(c => c._id !== commentId));
     } catch (error) {
       console.error('Error deleting comment:', error);
       alert(error.response?.data?.message || 'Failed to delete comment');
@@ -73,10 +79,10 @@ const CommentSection = ({ postId, comments, setComments }) => {
       )}
 
       <div className="space-y-4">
-        {comments.length === 0 ? (
+        {safeComments.length === 0 ? (
           <p className="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
         ) : (
-          comments.map((comment) => {
+          safeComments.map((comment) => {
             const isCommentAuthor = currentUser && comment.user?._id === currentUser._id;
             
             return (
