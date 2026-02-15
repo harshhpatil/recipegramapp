@@ -10,6 +10,9 @@ const Home = () => {
   const { fetchPosts } = usePosts();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Ensure posts is always an array
+  const safePosts = posts || [];
+
   useEffect(() => {
     fetchPosts(1, true);
   }, []);
@@ -35,13 +38,13 @@ const Home = () => {
         </div>
       )}
       
-      {loading && posts.length === 0 ? (
+      {loading && safePosts.length === 0 ? (
         <div className="space-y-8">
           <PostCardSkeleton />
           <PostCardSkeleton />
           <PostCardSkeleton />
         </div>
-      ) : posts.length === 0 ? (
+      ) : safePosts.length === 0 ? (
         <div className="text-center py-12">
           <div className="mb-4">
             <svg className="w-24 h-24 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,7 +61,7 @@ const Home = () => {
         </div>
       ) : (
         <div className="space-y-8">
-          {posts.map((post) => (
+          {safePosts.map((post) => (
             <PostCard key={post._id} post={post} />
           ))}
         </div>
