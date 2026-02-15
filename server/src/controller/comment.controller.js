@@ -7,14 +7,6 @@ export const addComment = async (req, res) => {
     const { postId } = req.params;
     const { text } = req.body;
 
-    if (!text || text.trim().length === 0) {
-      return res.status(400).json({ message: "Comment text required" });
-    }
-
-    if (text.length > 500) {
-      return res.status(400).json({ message: "Comment must be 500 characters or less" });
-    }
-
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });

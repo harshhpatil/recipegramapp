@@ -7,10 +7,6 @@ export const createPost = async (req, res) => {
   try {
     const { caption, ingredients, steps, image } = req.body;
 
-    if (!caption || !image) {
-      return res.status(400).json({ message: "Caption and image are required" });
-    }
-
     const post = await Post.create({
       caption,
       ingredients,
@@ -124,11 +120,6 @@ export const updatePost = async (req, res) => {
     // Authorization check - only post author can update
     if (post.author.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not authorized to update this post" });
-    }
-
-    // Validation
-    if (caption !== undefined && caption.trim().length === 0) {
-      return res.status(400).json({ message: "Caption cannot be empty" });
     }
 
     // Update only provided fields
