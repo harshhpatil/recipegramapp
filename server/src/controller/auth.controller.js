@@ -27,9 +27,31 @@ export const register = async (req, res) => {
       password: hashedPassword
     });
 
+    // Generate token for auto-login after registration
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Return user data without password
+    const userData = {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      bio: user.bio,
+      profileImage: user.profileImage,
+      followersCount: user.followersCount,
+      followingCount: user.followingCount
+    };
+
     res.status(201).json({
+      success: true,
       message: "User registered successfully",
-      userId: user._id
+      data: {
+        token,
+        user: userData
+      }
     });
   } catch (err) {
     res.status(500).json({ message: "Registration failed" });
@@ -52,15 +74,30 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const sftk = jwt.sign(
+    const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
+    // Return user data without password
+    const userData = {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      bio: user.bio,
+      profileImage: user.profileImage,
+      followersCount: user.followersCount,
+      followingCount: user.followingCount
+    };
+
     res.json({
+      success: true,
       message: "Login successful",
-      sftk
+      data: {
+        token,
+        user: userData
+      }
     });
   } catch (err) {
     res.status(500).json({ message: "Login failed" });
