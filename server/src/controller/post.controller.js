@@ -17,12 +17,12 @@ export const createPost = async (req, res) => {
       author: req.user._id
     });
 
-    // Populate author data before returning
-    const populatedPost = await Post.findById(post._id).populate("author", "username profileImage");
+    // Populate author data directly on the created post
+    await post.populate("author", "username profileImage");
 
     res.status(201).json({
       message: "Post created successfully",
-      post: populatedPost
+      post
     });
   } catch (err) {
     console.error("Create post error:", err);
@@ -76,9 +76,8 @@ export const getFeed = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Get list of users the current user is following
-    const following = await Follow.find({ follower: req.user._id }).select("following");
-    const followingIds = following.map(f => f.following);
+    // Get list of users the current user is following (use distinct for better performance)
+    const followingIds = await Follow.distinct("following", { follower: req.user._id });
 
     // Include the current user's own posts as well
     followingIds.push(req.user._id);

@@ -5,6 +5,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
   const [caption, setCaption] = useState('');
   const [image, setImage] = useState('');
   const [imagePreview, setImagePreview] = useState('');
+  const [imageError, setImageError] = useState('');
   const [ingredients, setIngredients] = useState(['']);
   const [steps, setSteps] = useState(['']);
   const [loading, setLoading] = useState(false);
@@ -16,6 +17,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
     const value = e.target.value;
     setImage(value);
     setImagePreview(value);
+    setImageError('');
   };
 
   const addIngredient = () => {
@@ -84,6 +86,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
         setCaption('');
         setImage('');
         setImagePreview('');
+        setImageError('');
         setIngredients(['']);
         setSteps(['']);
         onClose();
@@ -135,13 +138,19 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                 disabled={loading}
                 required
               />
+              {imageError && (
+                <p className="mt-1 text-sm text-red-600">{imageError}</p>
+              )}
               {imagePreview && (
                 <div className="mt-2">
                   <img
                     src={imagePreview}
                     alt="Preview"
                     className="w-full h-48 object-cover rounded-md"
-                    onError={() => setImagePreview('')}
+                    onError={() => {
+                      setImagePreview('');
+                      setImageError('Invalid image URL. Please provide a valid image link.');
+                    }}
                   />
                 </div>
               )}
