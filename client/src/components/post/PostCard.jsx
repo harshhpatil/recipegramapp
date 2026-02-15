@@ -1,18 +1,39 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePosts } from '../../hooks';
+import { likeService } from '../../services';
 
 const PostCard = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likesCount || 0);
   const { likePost, unlikePost } = usePosts();
 
+  useEffect(() => {
+    // Check if the current user has liked this post
+    const checkLikeStatus = async () => {
+      try {
+        const response = await likeService.checkIfLiked(post._id);
+        setIsLiked(response.data.isLiked);
+      } catch (error) {
+        console.error('Error checking like status:', error);
+      }
+    };
+    checkLikeStatus();
+  }, [post._id]);
+
   const handleLike = async () => {
-    if (isLiked) {
-      await unlikePost(post._id);
-    } else {
-      await likePost(post._id);
+    try {
+      if (isLiked) {
+        await unlikePost(post._id);
+        setLikesCount(prev => prev - 1);
+      } else {
+        await likePost(post._id);
+        setLikesCount(prev => prev + 1);
+      }
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error('Error toggling like:', error);
     }
-    setIsLiked(!isLiked);
   };
 
   return (
@@ -63,7 +84,7 @@ const PostCard = ({ post }) => {
         </div>
 
         <div className="font-semibold mb-2">
-          {post.likesCount} likes
+          {likesCount} likes
         </div>
 
         <div className="mb-2">
