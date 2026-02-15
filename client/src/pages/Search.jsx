@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDebounce } from '../hooks';
 import { userService } from '../services';
 
@@ -26,7 +26,7 @@ const Search = () => {
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     handleSearch(debouncedQuery);
   }, [debouncedQuery]);
 

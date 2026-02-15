@@ -4,6 +4,7 @@ const app = express();
 // Import middleware
 import corsMiddleware from './middleware/cors.middleware.js';
 import { errorHandler, notFound } from './middleware/error.middleware.js';
+import { apiLimiter } from './middleware/rateLimiter.middleware.js';
 
 // Import routes
 import authRoutes from './routes/auth.routes.js';
@@ -12,6 +13,9 @@ import authRoutes from './routes/auth.routes.js';
 app.use(corsMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Apply rate limiting to all routes
+app.use(apiLimiter);
 app.use('/auth', authRoutes);
 
 

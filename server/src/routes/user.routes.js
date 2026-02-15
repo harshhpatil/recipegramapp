@@ -6,11 +6,12 @@ import {
   searchUsers 
 } from '../controller/user.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
+import { searchLimiter } from '../middleware/rateLimiter.middleware.js';
 
 const router = express.Router();
 
-// Get user profile (public)
-router.get('/:username', getUserProfile);
+// Search users (must be before /:username)
+router.get('/search', searchLimiter, searchUsers);
 
 // Update user profile (authenticated)
 router.put('/profile', authenticate, updateUserProfile);
@@ -18,7 +19,7 @@ router.put('/profile', authenticate, updateUserProfile);
 // Get user's posts
 router.get('/:userId/posts', getUserPosts);
 
-// Search users
-router.get('/search', searchUsers);
+// Get user profile (public) - must be last to avoid matching other routes
+router.get('/:username', getUserProfile);
 
 export default router;
