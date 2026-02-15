@@ -62,3 +62,23 @@ export const checkIfLiked = async (req, res) => {
     res.status(500).json({ message: "Failed to check like status" });
   }
 };
+
+export const getLikes = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const likes = await Like.find({ post: postId })
+      .populate("user", "username profileImage")
+      .sort({ createdAt: -1 });
+
+    res.json({ likes, count: likes.length });
+  } catch (err) {
+    console.error("Get likes error:", err);
+    res.status(500).json({ message: "Failed to fetch likes" });
+  }
+};
