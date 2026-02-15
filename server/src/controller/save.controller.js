@@ -1,6 +1,11 @@
 import User from "../models/User.model.js";
 import Post from "../models/Post.model.js";
 
+/**
+ * Toggle save/unsave a post
+ * @route POST /save/:postId
+ * @access Private
+ */
 export const toggleSavePost = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -31,6 +36,11 @@ export const toggleSavePost = async (req, res) => {
   }
 };
 
+/**
+ * Get all saved posts for current user with pagination
+ * @route GET /save?page=1&limit=10
+ * @access Private
+ */
 export const getSavedPosts = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -63,6 +73,11 @@ export const getSavedPosts = async (req, res) => {
   }
 };
 
+/**
+ * Check if current user has saved a post
+ * @route GET /save/:postId/check
+ * @access Private
+ */
 export const checkIfSaved = async (req, res) => {
   try {
     const { postId } = req.params;

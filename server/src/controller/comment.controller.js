@@ -2,6 +2,11 @@ import Comment from "../models/Comment.model.js";
 import Post from "../models/Post.model.js";
 import createNotification from "../util/createNotification.js";
 
+/**
+ * Add a comment to a post
+ * @route POST /comments/:postId
+ * @access Private
+ */
 export const addComment = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -42,6 +47,11 @@ export const addComment = async (req, res) => {
   }
 };
 
+/**
+ * Get all comments for a post
+ * @route GET /comments/:postId
+ * @access Private
+ */
 export const getComments = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -57,6 +67,11 @@ export const getComments = async (req, res) => {
   }
 };
 
+/**
+ * Delete a comment (author only)
+ * @route DELETE /comments/:commentId
+ * @access Private
+ */
 export const deleteComment = async (req, res) => {
   try {
     const { commentId } = req.params;

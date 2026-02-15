@@ -3,6 +3,11 @@ import Follow from "../models/Follow.model.js";
 import Comment from "../models/Comment.model.js";
 import Like from "../models/Like.model.js";
 
+/**
+ * Create a new post
+ * @route POST /posts
+ * @access Private
+ */
 export const createPost = async (req, res) => {
   try {
     const { caption, ingredients, steps, image } = req.body;
@@ -28,6 +33,11 @@ export const createPost = async (req, res) => {
   }
 };
 
+/**
+ * Get all posts with pagination
+ * @route GET /posts?page=1&limit=10
+ * @access Private
+ */
 export const getAllPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -56,6 +66,11 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
+/**
+ * Get a single post by ID
+ * @route GET /posts/:id
+ * @access Private
+ */
 export const getPostById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -73,6 +88,11 @@ export const getPostById = async (req, res) => {
   }
 };
 
+/**
+ * Get personalized feed (posts from followed users + own posts)
+ * @route GET /posts/feed?page=1&limit=10
+ * @access Private
+ */
 export const getFeed = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -107,6 +127,11 @@ export const getFeed = async (req, res) => {
   }
 };
 
+/**
+ * Update a post (author only)
+ * @route PUT /posts/:id
+ * @access Private
+ */
 export const updatePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -138,6 +163,11 @@ export const updatePost = async (req, res) => {
   }
 };
 
+/**
+ * Delete a post (author only) with cascade delete of comments and likes
+ * @route DELETE /posts/:id
+ * @access Private
+ */
 export const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -165,6 +195,11 @@ export const deletePost = async (req, res) => {
   }
 };
 
+/**
+ * Search posts by caption or ingredients
+ * @route GET /posts/search?q=keyword&page=1&limit=10
+ * @access Private
+ */
 export const searchPosts = async (req, res) => {
   try {
     const { q, page = 1, limit = 10 } = req.query;
@@ -207,6 +242,11 @@ export const searchPosts = async (req, res) => {
   }
 };
 
+/**
+ * Get trending posts (most liked in last 7 days)
+ * @route GET /posts/trending?limit=10
+ * @access Private
+ */
 export const getTrendingPosts = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;

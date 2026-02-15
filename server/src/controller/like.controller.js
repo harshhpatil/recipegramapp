@@ -2,6 +2,11 @@ import createNotification from "../util/createNotification.js";
 import Like from "../models/Like.model.js";
 import Post from "../models/Post.model.js";
 
+/**
+ * Toggle like on a post (like if not liked, unlike if already liked)
+ * @route POST /likes/:postId
+ * @access Private
+ */
 export const toggleLike = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -47,6 +52,11 @@ export const toggleLike = async (req, res) => {
   }
 };
 
+/**
+ * Check if current user has liked a post
+ * @route GET /likes/:postId/check
+ * @access Private
+ */
 export const checkIfLiked = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -63,6 +73,11 @@ export const checkIfLiked = async (req, res) => {
   }
 };
 
+/**
+ * Get all users who liked a post
+ * @route GET /likes/:postId
+ * @access Private
+ */
 export const getLikes = async (req, res) => {
   try {
     const { postId } = req.params;
