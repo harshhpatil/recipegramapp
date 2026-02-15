@@ -1,9 +1,21 @@
 import express from 'express';
 const app = express();
 
+// Import middleware
+import corsMiddleware from './middleware/cors.middleware.js';
+import { errorHandler, notFound } from './middleware/error.middleware.js';
+import { apiLimiter } from './middleware/rateLimiter.middleware.js';
+
+// Import routes
 import authRoutes from './routes/auth.routes.js';
 
+// Middleware
+app.use(corsMiddleware);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Apply rate limiting to all routes
+app.use(apiLimiter);
 app.use('/auth', authRoutes);
 
 
@@ -23,6 +35,9 @@ app.use("/comments", commentRoutes);
 import followRoutes from "./routes/follow.routes.js";
 app.use("/follow", followRoutes);
 
+    import userRoutes from "./routes/user.routes.js";
+    app.use("/users", userRoutes);
+
     import saveRoutes from "./routes/save.routes.js";
     app.use("/save", saveRoutes);
 
@@ -30,8 +45,15 @@ app.use("/follow", followRoutes);
     app.use("/api/notifications", notificationRoutes);
 
     app.get('/', (req, res)=>{
-        res.send('Hello World!');
+        res.json({ 
+            success: true, 
+            message: 'RecipeGram API is running!',
+            version: '1.0.0'
+        });
     });
 
+    // Error handling middleware (must be last)
+    app.use(notFound);
+    app.use(errorHandler);
 
     export default app;
