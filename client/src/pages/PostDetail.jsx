@@ -4,11 +4,13 @@ import { useSelector } from 'react-redux';
 import { postService, commentService, likeService } from '../services';
 import { usePosts } from '../hooks';
 import CommentSection from '../components/post/CommentSection';
+import { useToast } from '../context/ToastContext';
 
 const PostDetail = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
+  const { showToast } = useToast();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,6 +21,7 @@ const PostDetail = () => {
   const [editIngredients, setEditIngredients] = useState('');
   const [editSteps, setEditSteps] = useState('');
   const [error, setError] = useState(null);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const { deletePost: deletePostHook } = usePosts();
 
   useEffect(() => {
@@ -68,18 +71,20 @@ const PostDetail = () => {
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      try {
-        const result = await deletePostHook(postId);
-        if (result.success) {
-          navigate('/');
-        } else {
-          alert('Failed to delete post');
-        }
-      } catch (error) {
-        console.error('Error deleting post:', error);
-        alert('Failed to delete post');
+    if (!isConfirmingDelete) {
+      setIsConfirmingDelete(true);
+      return;
+    }
+    try {
+      const result = await deletePostHook(postId);
+      if (result.success) {
+        navigate('/');
+      } else {
+        showToast('Failed to delete post', 'error');
       }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      showToast('Failed to delete post', 'error');
     }
   };
 
@@ -98,10 +103,10 @@ const PostDetail = () => {
       const updatedPost = response.data?.post || response.post;
       setPost(updatedPost);
       setIsEditing(false);
-      alert('Post updated successfully!');
+      showToast('Post updated successfully!', 'success');
     } catch (error) {
       console.error('Error updating post:', error);
-      alert(error.message || 'Failed to update post');
+      showToast(error.message || 'Failed to update post', 'error');
     }
   };
 
@@ -168,19 +173,36 @@ const PostDetail = () => {
             </Link>
 
             {isAuthor && !isEditing && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <button
                   onClick={() => setIsEditing(true)}
                   className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                 >
                   Edit Post
                 </button>
-                <button
-                  onClick={handleDelete}
-                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                >
-                  Delete Post
-                </button>
+                {isConfirmingDelete ? (
+                  <>
+                    <button
+                      onClick={handleDelete}
+                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                    >
+                      Confirm Delete
+                    </button>
+                    <button
+                      onClick={() => setIsConfirmingDelete(false)}
+                      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={handleDelete}
+                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                  >
+                    Delete Post
+                  </button>
+                )}
               </div>
             )}
           </div>

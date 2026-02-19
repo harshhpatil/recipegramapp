@@ -2,6 +2,15 @@
  * Validation middleware for input validation
  */
 
+const isValidUrl = (str) => {
+  try {
+    const u = new URL(str);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 export const validatePost = (req, res, next) => {
   const { caption, image } = req.body;
 
@@ -26,9 +35,7 @@ export const validatePost = (req, res, next) => {
     });
   }
 
-  // Validate URL format (basic check)
-  const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-  if (!urlPattern.test(image)) {
+  if (!isValidUrl(image)) {
     return res.status(400).json({ 
       success: false,
       message: "Image must be a valid URL" 
@@ -65,8 +72,7 @@ export const validatePostUpdate = (req, res, next) => {
       });
     }
 
-    const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-    if (!urlPattern.test(image)) {
+    if (!isValidUrl(image)) {
       return res.status(400).json({ 
         success: false,
         message: "Image must be a valid URL" 

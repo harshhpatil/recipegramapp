@@ -65,6 +65,15 @@ const CreatePostModal = ({ isOpen, onClose }) => {
       return;
     }
 
+    const isValidUrl = (str) => {
+      try { const u = new URL(str); return u.protocol === 'http:' || u.protocol === 'https:'; }
+      catch { return false; }
+    };
+    if (!isValidUrl(image.trim())) {
+      setError('Please enter a valid image URL (must start with http:// or https://)');
+      return;
+    }
+
     setLoading(true);
 
     // Filter out empty ingredients and steps
