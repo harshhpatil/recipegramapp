@@ -20,6 +20,17 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    if (!formData.password) {
+      setError('Password is required');
+      return;
+    }
+
     setLoading(true);
 
     const result = await login(formData);

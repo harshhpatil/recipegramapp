@@ -4,7 +4,8 @@ const postSchema = new mongoose.Schema(
   {
     caption: {
       type: String,
-      required: true
+      required: true,
+      maxlength: [2000, 'Caption cannot exceed 2000 characters']
     },
     ingredients: [String],
     steps: [String],
@@ -19,11 +20,13 @@ const postSchema = new mongoose.Schema(
     },
     likesCount: {
       type: Number,
-      default: 0
+      default: 0,
+      min: 0
     },
     commentsCount: {
       type: Number,
-      default: 0
+      default: 0,
+      min: 0
     }
   },
   { timestamps: true }
