@@ -28,6 +28,10 @@ const Register = () => {
     return 'strong';
   };
 
+  const strengthLabel = { weak: 'Weak', medium: 'Medium', strong: 'Strong' };
+  const strengthBarClass = { weak: 'w-1/3 bg-red-500', medium: 'w-2/3 bg-yellow-400', strong: 'w-full bg-green-500' };
+  const strengthTextClass = { weak: 'text-red-500', medium: 'text-yellow-600', strong: 'text-green-600' };
+
   const passwordStrength = getPasswordStrength(formData.password);
 
   const handleSubmit = async (e) => {
@@ -134,24 +138,10 @@ const Register = () => {
             {formData.password && (
               <div className="mt-2">
                 <div className="h-1.5 w-full bg-gray-200 rounded">
-                  <div
-                    className={`h-1.5 rounded transition-all ${
-                      passwordStrength === 'weak'
-                        ? 'w-1/3 bg-red-500'
-                        : passwordStrength === 'medium'
-                        ? 'w-2/3 bg-yellow-400'
-                        : 'w-full bg-green-500'
-                    }`}
-                  />
+                  <div className={`h-1.5 rounded transition-all ${strengthBarClass[passwordStrength]}`} />
                 </div>
-                <p className={`text-xs mt-1 ${
-                  passwordStrength === 'weak'
-                    ? 'text-red-500'
-                    : passwordStrength === 'medium'
-                    ? 'text-yellow-600'
-                    : 'text-green-600'
-                }`}>
-                  {passwordStrength === 'weak' ? 'Weak' : passwordStrength === 'medium' ? 'Medium' : 'Strong'} password
+                <p className={`text-xs mt-1 ${strengthTextClass[passwordStrength]}`}>
+                  {strengthLabel[passwordStrength]} password
                 </p>
               </div>
             )}
