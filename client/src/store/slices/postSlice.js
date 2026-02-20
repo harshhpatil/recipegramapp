@@ -19,15 +19,21 @@ const postSlice = createSlice({
     },
     fetchPostsSuccess: (state, action) => {
       state.loading = false;
-      state.posts = action.payload.reset 
-        ? action.payload.posts 
-        : [...state.posts, ...action.payload.posts];
-      state.hasMore = action.payload.hasMore;
-      state.page = action.payload.page;
+      
+      // SAFETY CHECK: Ensure action.payload and action.payload.posts exist
+      const incomingPosts = action.payload?.posts || [];
+      
+      state.posts = action.payload?.reset 
+        ? incomingPosts 
+        : [...state.posts, ...incomingPosts];
+        
+      state.hasMore = action.payload?.hasMore ?? false;
+      state.page = action.payload?.page || state.page;
     },
     fetchPostsFailure: (state, action) => {
       state.loading = false;
-      state.error = action.payload;
+      // If action.payload is an object, try to get the message
+      state.error = action.payload?.message || action.payload || "An unknown error occurred";
     },
     setCurrentPost: (state, action) => {
       state.currentPost = action.payload;
@@ -36,6 +42,7 @@ const postSlice = createSlice({
       state.posts = [action.payload, ...state.posts];
     },
     updatePost: (state, action) => {
+      if (!action.payload?._id) return;
       const index = state.posts.findIndex(post => post._id === action.payload._id);
       if (index !== -1) {
         state.posts[index] = action.payload;
@@ -54,30 +61,30 @@ const postSlice = createSlice({
       const { postId } = action.payload;
       const post = state.posts.find(p => p._id === postId);
       if (post) {
-        post.likesCount += 1;
+        post.likesCount = (post.likesCount || 0) + 1;
       }
       if (state.currentPost?._id === postId) {
-        state.currentPost.likesCount += 1;
+        state.currentPost.likesCount = (state.currentPost.likesCount || 0) + 1;
       }
     },
     unlikePost: (state, action) => {
       const { postId } = action.payload;
       const post = state.posts.find(p => p._id === postId);
       if (post) {
-        post.likesCount -= 1;
+        post.likesCount = Math.max(0, (post.likesCount || 0) - 1);
       }
       if (state.currentPost?._id === postId) {
-        state.currentPost.likesCount -= 1;
+        state.currentPost.likesCount = Math.max(0, (state.currentPost.likesCount || 0) - 1);
       }
     },
     addComment: (state, action) => {
       const { postId } = action.payload;
       const post = state.posts.find(p => p._id === postId);
       if (post) {
-        post.commentsCount += 1;
+        post.commentsCount = (post.commentsCount || 0) + 1;
       }
       if (state.currentPost?._id === postId) {
-        state.currentPost.commentsCount += 1;
+        state.currentPost.commentsCount = (state.currentPost.commentsCount || 0) + 1;
       }
     },
     clearPosts: (state) => {

@@ -19,17 +19,36 @@ export const usePosts = () => {
   const fetchPosts = useCallback(async (page = 1, reset = false) => {
     try {
       dispatch(fetchPostsStart());
+      
       const response = await postService.getAllPosts(page);
+      
+      // --- DEBUGGING LOG ---
+      // This will show you exactly what is coming from the server
+      console.log(`[usePosts] Fetching page ${page}, reset: ${reset}`);
+      console.log("API Response Data:", response.data);
+
+      // 1. SAFE DATA CHECK
+      // We ensure data is an array before calling .length
+      // If your API wraps the array in an object (e.g., { posts: [] }), 
+      // change this to: const postsArray = response.data?.posts || [];
+      const postsArray = Array.isArray(response.data) ? response.data : [];
+
       dispatch(fetchPostsSuccess({
-        posts: response.data,
-        hasMore: response.data.length > 0,
+        posts: postsArray,
+        hasMore: postsArray.length > 0, // Now safe!
         page,
         reset,
       }));
+
       return { success: true };
     } catch (error) {
-      dispatch(fetchPostsFailure(error.message));
-      return { success: false, error: error.message };
+      // 2. CATCH THE REAL ERROR
+      // If the try block fails (like a network error), we capture it here.
+      const errorMsg = error.response?.data?.message || error.message || "Failed to fetch posts";
+      console.error("Hook Error Caught:", errorMsg);
+      
+      dispatch(fetchPostsFailure(errorMsg));
+      return { success: false, error: errorMsg };
     }
   }, [dispatch]);
 

@@ -6,12 +6,23 @@ import PostCardSkeleton from '../components/common/PostCardSkeleton';
 import CreatePostModal from '../components/post/CreatePostModal';
 
 const Home = () => {
-  const { posts, loading, error } = useSelector((state) => state.posts);
+  // 1. Added a fallback to an empty object {} during destructuring to prevent crashes
+  // 2. Logged the state to the console so you can see exactly what Redux is sending
+  const { posts, loading, error } = useSelector((state) => {
+    console.log("REDUX STATE CHECK:", state.posts);
+    return state.posts || {}; 
+  });
+
   const { fetchPosts } = usePosts();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Ensure posts is always an array
-  const safePosts = posts || [];
+  // 3. Forced check: if posts is still somehow undefined/null, make it an empty array
+  const safePosts = Array.isArray(posts) ? posts : [];
+
+  // Debugging the length error specifically
+  if (typeof posts === 'undefined') {
+    console.error("DEBUG ERROR: 'posts' is undefined. Check your Redux Initial State.");
+  }
 
   useEffect(() => {
     fetchPosts(1, true);
@@ -38,6 +49,7 @@ const Home = () => {
         </div>
       )}
       
+      {/* 4. Use safePosts everywhere to ensure .length never hits an undefined object */}
       {loading && safePosts.length === 0 ? (
         <div className="space-y-8">
           <PostCardSkeleton />
@@ -62,7 +74,7 @@ const Home = () => {
       ) : (
         <div className="space-y-8">
           {safePosts.map((post) => (
-            <PostCard key={post._id} post={post} />
+            <PostCard key={post?._id || Math.random()} post={post} />
           ))}
         </div>
       )}

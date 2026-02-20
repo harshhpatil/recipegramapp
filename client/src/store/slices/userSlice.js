@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   profile: null,
-  userPosts: [],
+  userPosts: [], // Must remain an array
   loading: false,
   error: null,
 };
@@ -17,14 +17,17 @@ const userSlice = createSlice({
     },
     fetchUserSuccess: (state, action) => {
       state.loading = false;
-      state.profile = action.payload;
+      state.profile = action.payload || null;
     },
     fetchUserFailure: (state, action) => {
       state.loading = false;
-      state.error = action.payload;
+      // Extract the message if action.payload is an error object
+      state.error = action.payload?.message || action.payload || "User error";
     },
     fetchUserPostsSuccess: (state, action) => {
-      state.userPosts = action.payload;
+      state.loading = false;
+      // GUARD: Ensure userPosts is NEVER set to undefined
+      state.userPosts = Array.isArray(action.payload) ? action.payload : [];
     },
     clearUserProfile: (state) => {
       state.profile = null;
@@ -32,7 +35,11 @@ const userSlice = createSlice({
     },
     updateFollowStatus: (state, action) => {
       if (state.profile) {
-        state.profile.followersCount += action.payload.isFollowing ? 1 : -1;
+        // GUARD: Ensure followersCount exists before adding to it
+        const currentCount = state.profile.followersCount || 0;
+        state.profile.followersCount = action.payload.isFollowing 
+          ? currentCount + 1 
+          : Math.max(0, currentCount - 1);
       }
     },
   },
