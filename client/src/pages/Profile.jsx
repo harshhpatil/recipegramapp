@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUserStart, fetchUserSuccess, fetchUserFailure } from '../store/slices/userSlice';
@@ -53,7 +54,7 @@ const Profile = () => {
       const checkFollowStatus = async () => {
         try {
           const response = await followService.checkIfFollowing(profile._id);
-          setIsFollowing(response.data?.isFollowing || false);
+          setIsFollowing(response?.isFollowing || false);
         } catch (error) {
           console.error('Error checking follow status:', error);
         }
@@ -93,9 +94,9 @@ const Profile = () => {
           </svg>
           <div className="text-xl font-semibold text-gray-700 mb-2">User not found</div>
           <p className="text-gray-500 mb-4">This profile doesn't exist or has been removed</p>
-          <a href="/search" className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+          <Link to="/search" className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
             Search for Users
-          </a>
+          </Link>
         </div>
       </div>
     );

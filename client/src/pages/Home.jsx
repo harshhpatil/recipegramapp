@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useFeed } from '../hooks';
 import PostCard from '../components/post/PostCard';
@@ -74,12 +75,12 @@ const Home = () => {
             >
               Create Your First Post
             </button>
-            <a
-              href="/explore"
+            <Link
+              to="/explore"
               className="btn-outline text-center"
             >
               Explore Recipes
-            </a>
+            </Link>
           </div>
         </div>
       ) : (

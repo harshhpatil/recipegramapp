@@ -4,7 +4,7 @@ import Post from '../models/Post.model.js';
 // Get current user (me)
 export const getCurrentUser = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     
     const user = await User.findById(userId)
       .select('-password')
@@ -55,11 +55,15 @@ export const getUserProfile = async (req, res, next) => {
 export const updateUserProfile = async (req, res, next) => {
   try {
     const { bio, profileImage } = req.body;
-    const userId = req.user.id;
-    
+    const userId = req.user._id;
+
+    const updateData = {};
+    if (bio !== undefined) updateData.bio = bio;
+    if (profileImage !== undefined) updateData.profileImage = profileImage;
+
     const user = await User.findByIdAndUpdate(
       userId,
-      { bio, profileImage },
+      { $set: updateData },
       { new: true, runValidators: true }
     ).select('-password');
     
@@ -77,11 +81,13 @@ export const getUserPosts = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const { page = 1, limit = 12 } = req.query;
-    
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 12;
+
     const posts = await Post.find({ author: userId })
       .sort({ createdAt: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
+      .limit(limitNum)
+      .skip((pageNum - 1) * limitNum)
       .populate('author', 'username profileImage')
       .lean();
     
@@ -90,8 +96,8 @@ export const getUserPosts = async (req, res, next) => {
     res.json({
       success: true,
       data: posts,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page
+      totalPages: Math.ceil(count / limitNum),
+      currentPage: pageNum
     });
   } catch (error) {
     next(error);
@@ -110,6 +116,9 @@ export const searchUsers = async (req, res, next) => {
       });
     }
     
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 10;
+
     const users = await User.find({
       $or: [
         { username: { $regex: q, $options: 'i' } },
@@ -117,8 +126,8 @@ export const searchUsers = async (req, res, next) => {
       ]
     })
       .select('-password')
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
+      .limit(limitNum)
+      .skip((pageNum - 1) * limitNum)
       .lean();
     
     const count = await User.countDocuments({
@@ -131,8 +140,8 @@ export const searchUsers = async (req, res, next) => {
     res.json({
       success: true,
       data: users,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page
+      totalPages: Math.ceil(count / limitNum),
+      currentPage: pageNum
     });
   } catch (error) {
     next(error);
