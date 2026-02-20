@@ -20,7 +20,7 @@ export const initializeSocket = (httpServer) => {
   /**
    * Middleware: Authenticate socket connections
    */
-  io.use((socket, next) => {
+  io.use(async (socket, next) => {
     const token = socket.handshake.auth.token;
 
     if (!token) {
@@ -29,8 +29,10 @@ export const initializeSocket = (httpServer) => {
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "your_secret_key");
-      socket.userId = decoded.id;
-      socket.username = decoded.username;
+      socket.userId = decoded.userId;
+      const user = await User.findById(decoded.userId).select('username').lean();
+      if (!user) return next(new Error('User not found'));
+      socket.username = user.username;
       next();
     } catch (err) {
       next(new Error("Invalid token"));

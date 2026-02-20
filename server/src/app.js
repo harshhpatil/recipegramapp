@@ -4,7 +4,6 @@ const app = express();
 // Import middleware
 import corsMiddleware from './middleware/cors.middleware.js';
 import { errorHandler, notFound } from './middleware/error.middleware.js';
-import { apiLimiter } from './middleware/rateLimiter.middleware.js';
 
 // Import routes
 import authRoutes from './routes/auth.routes.js';
@@ -35,28 +34,28 @@ app.use("/comments", commentRoutes);
 import followRoutes from "./routes/follow.routes.js";
 app.use("/follow", followRoutes);
 
-    import userRoutes from "./routes/user.routes.js";
-    app.use("/users", userRoutes);
+import userRoutes from "./routes/user.routes.js";
+app.use("/users", userRoutes);
 
-    import saveRoutes from "./routes/save.routes.js";
-    app.use("/save", saveRoutes);
+import saveRoutes from "./routes/save.routes.js";
+app.use("/save", saveRoutes);
 
-    import notificationRoutes from "./routes/notification.routes.js";
-    app.use("/api/notifications", notificationRoutes);
+import notificationRoutes from "./routes/notification.routes.js";
+app.use("/api/notifications", notificationRoutes);
 
-    import messageRoutes from "./routes/message.routes.js";
-    app.use("/messages", messageRoutes);
+import messageRoutes from "./routes/message.routes.js";
+app.use("/messages", messageRoutes);
 
-    app.get('/', (req, res)=>{
-        res.json({ 
-            success: true, 
-            message: 'RecipeGram API is running!',
-            version: '1.0.0'
-        });
+app.get('/', (req, res)=>{
+    res.json({ 
+        success: true, 
+        message: 'RecipeGram API is running!',
+        version: '1.0.0'
     });
+});
 
-    // Error handling middleware (must be last)
-    app.use(notFound);
-    app.use(errorHandler);
+// Error handling middleware (must be last)
+app.use(notFound);
+app.use(errorHandler);
 
-    export default app;
+export default app;

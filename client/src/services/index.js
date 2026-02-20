@@ -120,14 +120,16 @@ export const followService = {
   },
 
   unfollowUser: async (userId) => {
-    return await api.delete(`/follow/${userId}`);
+    return await api.post(`/follow/${userId}`);
   },
 
   getFollowers: async (userId) => {
+    // NOTE: This route is not yet implemented on the backend
     return await api.get(`/follow/${userId}/followers`);
   },
 
   getFollowing: async (userId) => {
+    // NOTE: This route is not yet implemented on the backend
     return await api.get(`/follow/${userId}/following`);
   },
 
@@ -168,7 +170,7 @@ export const notificationService = {
   },
 
   markAsRead: async (notificationId) => {
-    return await api.put(`/api/notifications/${notificationId}/read`);
+    return await api.patch(`/api/notifications/${notificationId}/read`);
   },
 
   markAllAsRead: async () => {
