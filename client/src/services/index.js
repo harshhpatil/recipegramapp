@@ -17,6 +17,10 @@ export const authService = {
 
 // User services
 export const userService = {
+  getCurrentUser: async () => {
+    return await api.get('/users/me');
+  },
+
   getUserProfile: async (username) => {
     return await api.get(`/users/${username}`);
   },

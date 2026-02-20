@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFollowStatus } from '../store/slices/userSlice';
+import { updateCachedUserFollowStatus } from '../store/slices/userSlice';
+import { updateAuthorFollowStatus } from '../store/slices/postSlice';
+import { updateFeedAuthorFollowStatus } from '../store/slices/feedSlice';
 import { followService } from '../services';
 import { useToast } from '../context/ToastContext';
 
@@ -13,9 +15,22 @@ export const useFollow = () => {
       // Backend uses POST /follow/:userId for toggle
       await followService.followUser(userId);
 
-      // Update Redux state
-      dispatch(updateFollowStatus({
-        isFollowing: !isCurrentlyFollowing
+      const newFollowStatus = !isCurrentlyFollowing;
+
+      // Update Redux state across all slices for proper synchronization
+      dispatch(updateCachedUserFollowStatus({
+        userId,
+        isFollowing: newFollowStatus
+      }));
+
+      dispatch(updateAuthorFollowStatus({
+        userId,
+        isFollowing: newFollowStatus
+      }));
+
+      dispatch(updateFeedAuthorFollowStatus({
+        userId,
+        isFollowing: newFollowStatus
       }));
 
       showToast(
@@ -23,7 +38,7 @@ export const useFollow = () => {
         'success'
       );
 
-      return { success: true, isFollowing: !isCurrentlyFollowing };
+      return { success: true, isFollowing: newFollowStatus };
     } catch (error) {
       showToast(error.message || 'Follow action failed', 'error');
       return { success: false, error: error.message };

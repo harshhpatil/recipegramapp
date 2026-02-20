@@ -44,6 +44,9 @@ app.use("/follow", followRoutes);
     import notificationRoutes from "./routes/notification.routes.js";
     app.use("/api/notifications", notificationRoutes);
 
+    import messageRoutes from "./routes/message.routes.js";
+    app.use("/messages", messageRoutes);
+
     app.get('/', (req, res)=>{
         res.json({ 
             success: true, 

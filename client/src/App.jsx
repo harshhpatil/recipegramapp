@@ -5,6 +5,7 @@ import { ToastProvider } from './context/ToastContext';
 import Header from './components/common/Header';
 import Navigation from './components/common/Navigation';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import AuthInitializer from './components/common/AuthInitializer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -20,11 +21,12 @@ function App() {
   return (
     <Provider store={store}>
       <ToastProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50">
-            <Header />
-            <main className="pb-16 md:pb-0">
-              <Routes>
+        <AuthInitializer>
+          <Router>
+            <div className="min-h-screen bg-cream-50">
+              <Header />
+              <main className="pb-16 md:pb-0 pt-4">
+                <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route
@@ -88,8 +90,9 @@ function App() {
             <Navigation />
           </div>
         </Router>
-      </ToastProvider>
-    </Provider>
+      </AuthInitializer>
+    </ToastProvider>
+  </Provider>
   );
 }
 

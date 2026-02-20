@@ -1,12 +1,95 @@
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchConversations, setCurrentConversation } from '../store/slices/messageSlice';
+import ConversationList from '../components/messages/ConversationList';
+import ChatWindow from '../components/messages/ChatWindow';
+
 const Messages = () => {
+  const dispatch = useDispatch();
+  const { conversations, currentConversation, loading, error } = useSelector(
+    (state) => state.messages
+  );
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+
+  // Fetch conversations on mount
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchConversations());
+    }
+  }, [dispatch, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const intervalId = setInterval(() => {
+      dispatch(fetchConversations());
+    }, 45000);
+
+    return () => clearInterval(intervalId);
+  }, [dispatch, isAuthenticated]);
+
+  const handleSelectConversation = (conversation) => {
+    setSelectedConversation(conversation);
+    dispatch(setCurrentConversation(conversation.userId));
+  };
+
+  const handleBackToList = () => {
+    setSelectedConversation(null);
+    dispatch(setCurrentConversation(null));
+  };
+
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8">Messages</h1>
-      <div className="bg-white rounded-lg shadow-md p-8 text-center">
-        <p className="text-gray-500 text-lg">Messaging feature coming soon! Stay connected with other food lovers.</p>
-      </div>
+    <div className="h-screen flex flex-col md:flex-row bg-cream-50">
+      {/* Conversations List - Hidden on mobile when chat is open */}
+      {!selectedConversation && (
+        <div className="w-full md:w-80 border-r border-cream-300 bg-white flex flex-col">
+          <div className="p-4 border-b border-cream-200">
+            <h1 className="text-2xl font-bold text-warmGray-900">Messages</h1>
+          </div>
+          <ConversationList
+            conversations={conversations}
+            loading={loading}
+            error={error}
+            onSelectConversation={handleSelectConversation}
+          />
+        </div>
+      )}
+
+      {/* Chat Window - Full width on mobile, flex-1 on desktop */}
+      {selectedConversation ? (
+        <ChatWindow
+          conversation={selectedConversation}
+          onBack={handleBackToList}
+        />
+      ) : (
+        <div className="hidden md:flex flex-1 items-center justify-center bg-cream-50">
+          <div className="text-center">
+            <svg
+              className="w-24 h-24 mx-auto text-warmGray-300 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+            <h2 className="text-2xl font-semibold text-warmGray-700 mb-2">
+              Select a conversation
+            </h2>
+            <p className="text-warmGray-500">
+              Choose a conversation to start messaging
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Messages;
+

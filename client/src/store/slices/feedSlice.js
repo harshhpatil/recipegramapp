@@ -42,6 +42,18 @@ const feedSlice = createSlice({
       state.page = 1;
       state.hasMore = true;
     },
+    // Update author follower count across all feed posts when someone follows/unfollows
+    updateFeedAuthorFollowStatus: (state, action) => {
+      const { userId, isFollowing } = action.payload;
+      state.feedPosts.forEach(post => {
+        if (post.author?._id === userId) {
+          const currentCount = post.author.followersCount || 0;
+          post.author.followersCount = isFollowing 
+            ? currentCount + 1 
+            : Math.max(0, currentCount - 1);
+        }
+      });
+    },
   },
 });
 
@@ -52,6 +64,7 @@ export const {
   updateFeedPost,
   removeFeedPost,
   clearFeed,
+  updateFeedAuthorFollowStatus,
 } = feedSlice.actions;
 
 export default feedSlice.reducer;

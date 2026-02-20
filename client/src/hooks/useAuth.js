@@ -7,9 +7,12 @@ import {
   registerStart,
   registerSuccess,
   registerFailure,
+  getCurrentUserStart,
+  getCurrentUserSuccess,
+  getCurrentUserFailure,
   logout as logoutAction
 } from '../store/slices/authSlice';
-import { authService } from '../services';
+import { authService, userService } from '../services';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -38,10 +41,22 @@ export const useAuth = () => {
     }
   }, [dispatch]);
 
+  const getCurrentUser = useCallback(async () => {
+    try {
+      dispatch(getCurrentUserStart());
+      const response = await userService.getCurrentUser();
+      dispatch(getCurrentUserSuccess(response.data));
+      return { success: true };
+    } catch (error) {
+      dispatch(getCurrentUserFailure(error.message));
+      return { success: false, error: error.message };
+    }
+  }, [dispatch]);
+
   const logout = useCallback(() => {
     authService.logout();
     dispatch(logoutAction());
   }, [dispatch]);
 
-  return { login, register, logout };
+  return { login, register, getCurrentUser, logout };
 };

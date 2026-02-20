@@ -29,8 +29,8 @@ const Register = () => {
   };
 
   const strengthLabel = { weak: 'Weak', medium: 'Medium', strong: 'Strong' };
-  const strengthBarClass = { weak: 'w-1/3 bg-red-500', medium: 'w-2/3 bg-yellow-400', strong: 'w-full bg-green-500' };
-  const strengthTextClass = { weak: 'text-red-500', medium: 'text-yellow-600', strong: 'text-green-600' };
+  const strengthBarClass = { weak: 'w-1/3 bg-error-500', medium: 'w-2/3 bg-warning-500', strong: 'w-full bg-success-500' };
+  const strengthTextClass = { weak: 'text-error-600', medium: 'text-warning-600', strong: 'text-success-600' };
 
   const passwordStrength = getPasswordStrength(formData.password);
 
@@ -84,74 +84,102 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center mb-8">Join RecipeGram</h1>
+    <div className="flex justify-center items-center min-h-screen bg-linear-to-br from-cream-50 via-cream-100 to-secondary-50/30 px-4 py-12">
+      <div className="w-full max-w-md">
+        {/* Logo Card */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-primary-500 to-primary-600 shadow-soft-lg mb-4">
+            <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <h1 className="text-4xl font-semibold text-warmGray-900 tracking-tight mb-2">Join RecipeGram</h1>
+          <p className="text-warmGray-600 text-lg">Start sharing your culinary creations</p>
+        </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Username
-            </label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Choose a username"
-            />
-            {fieldErrors.username && (
-              <p className="mt-1 text-sm text-red-600">{fieldErrors.username}</p>
-            )}
-          </div>
+        {/* Form Card */}
+        <div className="card p-8">
+          <h2 className="text-2xl font-semibold text-warmGray-900 mb-6">Create Your Account</h2>
+          
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-warmGray-700 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="input"
+                placeholder="Choose a username"
+              />
+              {fieldErrors.username && (
+                <p className="mt-2 text-sm text-error-600 flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {fieldErrors.username}
+                </p>
+              )}
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your email"
-            />
-            {fieldErrors.email && (
-              <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
-            )}
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-warmGray-700 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="input"
+                placeholder="Enter your email"
+              />
+              {fieldErrors.email && (
+                <p className="mt-2 text-sm text-error-600 flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {fieldErrors.email}
+                </p>
+              )}
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Create a password"
-            />
-            {formData.password && (
-              <div className="mt-2">
-                <div className="h-1.5 w-full bg-gray-200 rounded">
-                  <div className={`h-1.5 rounded transition-all ${strengthBarClass[passwordStrength]}`} />
-                </div>
-                <p className={`text-xs mt-1 ${strengthTextClass[passwordStrength]}`}>
+            <div>
+              <label className="block text-sm font-medium text-warmGray-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="input"
+                placeholder="Create a password"
+              />
+              {formData.password && (
+                <div className="mt-2">
+                  <div className="h-1.5 w-full bg-cream-200 rounded-full overflow-hidden">
+                    <div className={`h-1.5 rounded-full transition-all ${strengthBarClass[passwordStrength]}`} />
+                  </div>
+                <p className={`text-xs mt-2 font-medium ${strengthTextClass[passwordStrength]}`}>
                   {strengthLabel[passwordStrength]} password
                 </p>
               </div>
             )}
             {fieldErrors.password && (
-              <p className="mt-1 text-sm text-red-600">{fieldErrors.password}</p>
+              <p className="mt-2 text-sm text-error-600 flex items-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {fieldErrors.password}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-warmGray-700 mb-2">
               Confirm Password
             </label>
             <input
@@ -159,35 +187,56 @@ const Register = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input"
               placeholder="Confirm your password"
             />
             {fieldErrors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-600">{fieldErrors.confirmPassword}</p>
+              <p className="mt-2 text-sm text-error-600 flex items-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {fieldErrors.confirmPassword}
+              </p>
             )}
           </div>
 
           {error && (
-            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-              {error}
+            <div className="card bg-error-50 border-error-200 text-error-700 p-4 flex items-start gap-3">
+              <svg className="w-5 h-5 text-error-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm">{error}</span>
             </div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            className="btn-primary w-full flex items-center justify-center gap-2"
           >
-            {loading ? 'Creating account...' : 'Sign Up'}
+            {loading ? (
+              <>
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                <span>Creating Account...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                <span>Sign Up</span>
+              </>
+            )}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
+        <p className="mt-6 text-center text-sm text-warmGray-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline">
+          <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
             Log in
           </Link>
         </p>
+        </div>
       </div>
     </div>
   );

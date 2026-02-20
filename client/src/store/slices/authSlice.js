@@ -44,6 +44,24 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    getCurrentUserStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    getCurrentUserSuccess: (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+      state.isAuthenticated = true;
+    },
+    getCurrentUserFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      // If token is invalid, clear auth state
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem('token');
+    },
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -68,6 +86,9 @@ export const {
   registerStart,
   registerSuccess,
   registerFailure,
+  getCurrentUserStart,
+  getCurrentUserSuccess,
+  getCurrentUserFailure,
   logout,
   updateUser,
   clearError,

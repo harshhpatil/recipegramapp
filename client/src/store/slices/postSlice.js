@@ -92,6 +92,25 @@ const postSlice = createSlice({
       state.page = 1;
       state.hasMore = true;
     },
+    // Update author follower count across all posts when someone follows/unfollows
+    updateAuthorFollowStatus: (state, action) => {
+      const { userId, isFollowing } = action.payload;
+      state.posts.forEach(post => {
+        if (post.author?._id === userId) {
+          const currentCount = post.author.followersCount || 0;
+          post.author.followersCount = isFollowing 
+            ? currentCount + 1 
+            : Math.max(0, currentCount - 1);
+        }
+      });
+      // Also update current post if viewing one
+      if (state.currentPost?.author?._id === userId) {
+        const currentCount = state.currentPost.author.followersCount || 0;
+        state.currentPost.author.followersCount = isFollowing 
+          ? currentCount + 1 
+          : Math.max(0, currentCount - 1);
+      }
+    },
   },
 });
 
@@ -107,6 +126,7 @@ export const {
   unlikePost,
   addComment,
   clearPosts,
+  updateAuthorFollowStatus,
 } = postSlice.actions;
 
 export default postSlice.reducer;

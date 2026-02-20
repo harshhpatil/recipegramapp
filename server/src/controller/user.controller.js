@@ -1,6 +1,31 @@
 import User from '../models/User.model.js';
 import Post from '../models/Post.model.js';
 
+// Get current user (me)
+export const getCurrentUser = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    
+    const user = await User.findById(userId)
+      .select('-password')
+      .lean();
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Get user profile by username
 export const getUserProfile = async (req, res, next) => {
   try {

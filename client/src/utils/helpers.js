@@ -23,6 +23,32 @@ export const formatDate = (dateString) => {
   }
 };
 
+// Format distance to now (for messages - more detailed)
+export const formatDistanceToNow = (date) => {
+  if (!date || !(date instanceof Date)) {
+    return '';
+  }
+
+  const now = new Date();
+  const diffMs = now - date;
+  const diffSecs = Math.floor(diffMs / 1000);
+  const diffMins = Math.floor(diffSecs / 60);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffSecs < 60) {
+    return 'just now';
+  } else if (diffMins < 60) {
+    return `${diffMins}m ago`;
+  } else if (diffHours < 24) {
+    return `${diffHours}h ago`;
+  } else if (diffDays < 7) {
+    return `${diffDays}d ago`;
+  } else {
+    return date.toLocaleDateString();
+  }
+};
+
 // Validate email format
 export const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -77,6 +103,7 @@ export const debounce = (func, wait) => {
 
 export default {
   formatDate,
+  formatDistanceToNow,
   isValidEmail,
   isValidPassword,
   truncateText,

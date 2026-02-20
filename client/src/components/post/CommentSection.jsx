@@ -87,7 +87,7 @@ const CommentSection = ({ postId, comments, setComments }) => {
             
             return (
               <div key={comment._id} className="flex gap-3">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center font-bold text-gray-600 text-sm flex-shrink-0">
+                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center font-bold text-gray-600 text-sm shrink-0">
                   {comment.user?.profileImage ? (
                     <img 
                       src={comment.user.profileImage} 

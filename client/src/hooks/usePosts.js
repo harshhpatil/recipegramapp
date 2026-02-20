@@ -22,28 +22,23 @@ export const usePosts = () => {
       
       const response = await postService.getAllPosts(page);
       
-      // --- DEBUGGING LOG ---
-      // This will show you exactly what is coming from the server
       console.log(`[usePosts] Fetching page ${page}, reset: ${reset}`);
-      console.log("API Response Data:", response.data);
+      console.log("API Response:", response);
 
-      // 1. SAFE DATA CHECK
-      // We ensure data is an array before calling .length
-      // If your API wraps the array in an object (e.g., { posts: [] }), 
-      // change this to: const postsArray = response.data?.posts || [];
-      const postsArray = Array.isArray(response.data) ? response.data : [];
+      // Backend returns { page, limit, total, totalPages, posts }
+      // Access the 'posts' property from response.data
+      const postsArray = response.data?.posts || response.posts || [];
+      const hasMore = response.data?.page < response.data?.totalPages || false;
 
       dispatch(fetchPostsSuccess({
         posts: postsArray,
-        hasMore: postsArray.length > 0, // Now safe!
-        page,
+        hasMore: hasMore,
+        page: response.data?.page || page,
         reset,
       }));
 
       return { success: true };
     } catch (error) {
-      // 2. CATCH THE REAL ERROR
-      // If the try block fails (like a network error), we capture it here.
       const errorMsg = error.response?.data?.message || error.message || "Failed to fetch posts";
       console.error("Hook Error Caught:", errorMsg);
       

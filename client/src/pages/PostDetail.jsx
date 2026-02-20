@@ -113,7 +113,10 @@ const PostDetail = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl">Loading post...</div>
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600 mb-4"></div>
+          <div className="text-xl text-gray-600">Loading post...</div>
+        </div>
       </div>
     );
   }
@@ -121,11 +124,15 @@ const PostDetail = () => {
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-center">
-          <div className="text-xl text-red-600 mb-4">{error}</div>
+        <div className="text-center bg-white p-8 rounded-lg shadow-md">
+          <svg className="w-16 h-16 mx-auto text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div className="text-xl font-semibold text-gray-800 mb-2">Oops!</div>
+          <div className="text-red-600 mb-6">{error}</div>
           <button
             onClick={() => window.history.back()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
           >
             Go Back
           </button>
@@ -137,7 +144,12 @@ const PostDetail = () => {
   if (!post) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl">Post not found</div>
+        <div className="text-center bg-white p-8 rounded-lg shadow-md">
+          <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div className="text-xl font-semibold text-gray-700">Post not found</div>
+        </div>
       </div>
     );
   }
@@ -148,15 +160,20 @@ const PostDetail = () => {
     <div className="max-w-4xl mx-auto py-8 px-4">
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+          <strong>Error:</strong> {error}
         </div>
       )}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <img 
-          src={post.image} 
-          alt={post.caption} 
-          className="w-full h-96 object-cover"
-        />
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="relative">
+          <img 
+            src={post.image} 
+            alt={post.caption} 
+            className="w-full h-96 object-cover"
+          />
+          <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm font-medium">
+            Recipe
+          </div>
+        </div>
         
         <div className="p-6">
           {/* Author Info and Actions */}
@@ -176,21 +193,24 @@ const PostDetail = () => {
               <div className="flex gap-2 items-center">
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2"
                 >
-                  Edit Post
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Edit
                 </button>
                 {isConfirmingDelete ? (
                   <>
                     <button
                       onClick={handleDelete}
-                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
                     >
-                      Confirm Delete
+                      ✓ Confirm Delete
                     </button>
                     <button
                       onClick={() => setIsConfirmingDelete(false)}
-                      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
                     >
                       Cancel
                     </button>
@@ -198,9 +218,12 @@ const PostDetail = () => {
                 ) : (
                   <button
                     onClick={handleDelete}
-                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium flex items-center gap-2"
                   >
-                    Delete Post
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete
                   </button>
                 )}
               </div>
@@ -281,11 +304,20 @@ const PostDetail = () => {
 
               {/* Ingredients */}
               {post.ingredients && post.ingredients.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-3">Ingredients</h3>
-                  <ul className="list-disc list-inside space-y-2 bg-gray-50 p-4 rounded-md">
+                <div className="mb-6 bg-blue-50 p-5 rounded-lg border border-blue-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <h3 className="text-xl font-bold text-gray-800">Ingredients</h3>
+                    <span className="text-sm text-gray-600">({post.ingredients.length} items)</span>
+                  </div>
+                  <ul className="space-y-2">
                     {post.ingredients.map((ingredient, index) => (
-                      <li key={index} className="text-gray-700">{ingredient}</li>
+                      <li key={index} className="flex items-start gap-2 text-gray-700">
+                        <span className="text-blue-600 mt-1">•</span>
+                        <span>{ingredient}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -294,12 +326,20 @@ const PostDetail = () => {
               {/* Cooking Steps */}
               {post.steps && post.steps.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-3">Cooking Steps</h3>
+                  <div className="flex items-center gap-2 mb-3">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 className="text-xl font-bold text-gray-800">Cooking Steps</h3>
+                    <span className="text-sm text-gray-600">({post.steps.length} steps)</span>
+                  </div>
                   <ol className="space-y-3">
                     {post.steps.map((step, index) => (
-                      <li key={index} className="flex gap-3 bg-gray-50 p-4 rounded-md">
-                        <span className="font-bold text-blue-500 text-lg">{index + 1}.</span>
-                        <span className="text-gray-700">{step}</span>
+                      <li key={index} className="flex gap-3 bg-linear-to-r from-green-50 to-white p-4 rounded-lg border-l-4 border-green-500">
+                        <div className="shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                          {index + 1}
+                        </div>
+                        <span className="text-gray-700 pt-1">{step}</span>
                       </li>
                     ))}
                   </ol>

@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import postReducer from './slices/postSlice';
 import feedReducer from './slices/feedSlice';
 import userReducer from './slices/userSlice';
+import messageReducer from './slices/messageSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     posts: postReducer,
     feed: feedReducer,
     user: userReducer,
+    messages: messageReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,5 +1,6 @@
 import express from 'express';
 import { 
+  getCurrentUser,
   getUserProfile, 
   updateUserProfile, 
   getUserPosts,
@@ -9,6 +10,9 @@ import { authenticate } from '../middleware/auth.middleware.js';
 import { searchLimiter } from '../middleware/rateLimiter.middleware.js';
 
 const router = express.Router();
+
+// Get current user (must be before other routes to avoid conflicts)
+router.get('/me', authenticate, getCurrentUser);
 
 // Search users (must be before /:username)
 router.get('/search', searchLimiter, searchUsers);

@@ -42,6 +42,16 @@ const userSlice = createSlice({
           : Math.max(0, currentCount - 1);
       }
     },
+    // Update any cached user data when follow status changes
+    updateCachedUserFollowStatus: (state, action) => {
+      const { userId, isFollowing } = action.payload;
+      if (state.profile && state.profile._id === userId) {
+        const currentCount = state.profile.followersCount || 0;
+        state.profile.followersCount = isFollowing 
+          ? currentCount + 1 
+          : Math.max(0, currentCount - 1);
+      }
+    },
   },
 });
 
@@ -52,6 +62,7 @@ export const {
   fetchUserPostsSuccess,
   clearUserProfile,
   updateFollowStatus,
+  updateCachedUserFollowStatus,
 } = userSlice.actions;
 
 export default userSlice.reducer;
