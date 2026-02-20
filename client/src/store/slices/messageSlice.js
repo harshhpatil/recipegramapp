@@ -7,7 +7,7 @@ import api from "../../services/api.js";
 
 export const sendMessage = createAsyncThunk(
   "messages/sendMessage",
-  async ({ recipientId, content, image, parentMessageId }, { rejectWithValue }) => {
+  async ({ recipientId, content, image, parentMessageId, tempId }, { rejectWithValue }) => {
     try {
       const response = await api.post("/messages", {
         recipientId,
@@ -15,7 +15,7 @@ export const sendMessage = createAsyncThunk(
         image,
         parentMessageId
       });
-      return response.data.data;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to send message");
     }
@@ -27,7 +27,7 @@ export const fetchConversations = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get("/messages");
-      return response.data.conversations;
+      return response.conversations;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch conversations");
     }
@@ -41,9 +41,9 @@ export const fetchConversation = createAsyncThunk(
       const response = await api.get(`/messages/${userId}?page=${page}&limit=${limit}`);
       return {
         userId,
-        messages: response.data.messages,
-        page: response.data.page,
-        total: response.data.total
+        messages: response.messages,
+        page: response.page,
+        total: response.total
       };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch conversation");
@@ -56,7 +56,7 @@ export const markMessageAsRead = createAsyncThunk(
   async (messageId, { rejectWithValue }) => {
     try {
       const response = await api.put(`/messages/${messageId}/read`);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to mark message as read");
     }
@@ -80,7 +80,7 @@ export const fetchUnreadCount = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get("/messages/unread/count");
-      return response.data.unreadCount;
+      return response.unreadCount;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch unread count");
     }
@@ -400,7 +400,10 @@ const messagesSlice = createSlice({
         const { userId, messages, page, total } = action.payload;
         const currentUserId = action.meta?.arg?.currentUserId || null;
         const normalized = messages.map((message) => applyStatus(message, currentUserId));
-        const merged = mergeMessages(state.currentConversation.messages, normalized);
+        const existingMessages = state.currentConversation.userId === userId
+          ? state.currentConversation.messages
+          : [];
+        const merged = mergeMessages(existingMessages, normalized);
         state.currentConversation.userId = userId;
         state.currentConversation.messages = merged;
         state.currentConversation.page = page;
