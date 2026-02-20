@@ -126,6 +126,10 @@ export const followService = {
   getFollowing: async (userId) => {
     return await api.get(`/follow/${userId}/following`);
   },
+
+  checkIfFollowing: async (userId) => {
+    return await api.get(`/follow/${userId}/check`);
+  },
 };
 
 // Save services

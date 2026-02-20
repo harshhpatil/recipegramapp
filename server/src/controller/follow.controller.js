@@ -1,5 +1,6 @@
 import Follow from "../models/Follow.model.js";
 import User from "../models/User.model.js";
+import createNotification from "../util/createNotification.js";
 
 export const toggleFollow = async (req, res) => {
   try {
@@ -51,6 +52,23 @@ export const toggleFollow = async (req, res) => {
     res.json({ message: "User followed" });
   } catch (err) {
     res.status(500).json({ message: "Follow action failed" });
+  }
+};
+
+export const checkIfFollowing = async (req, res) => {
+  try {
+    const targetUserId = req.params.userId;
+    const currentUserId = req.user._id.toString();
+
+    const existingFollow = await Follow.findOne({
+      follower: currentUserId,
+      following: targetUserId
+    });
+
+    res.json({ isFollowing: !!existingFollow });
+  } catch (err) {
+    console.error('checkIfFollowing error:', err);
+    res.status(500).json({ message: "Failed to check follow status" });
   }
 };
 
