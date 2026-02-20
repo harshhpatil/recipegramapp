@@ -172,11 +172,23 @@ const messagesSlice = createSlice({
         // Move to top
         const [conversation] = state.conversations.splice(conversationIndex, 1);
         state.conversations.unshift(conversation);
+      } else {
+        const isIncoming = state.currentConversation.userId !== message.sender._id;
+        const otherUser = message.sender;
+        state.conversations.unshift({
+          userId: otherUser._id,
+          username: otherUser.username,
+          profileImage: otherUser.profileImage,
+          lastMessage: message.content,
+          lastMessageTime: message.createdAt,
+          unreadCount: isIncoming ? 1 : 0,
+          isCurrentUserSender: !isIncoming
+        });
       }
     },
 
     addOptimisticMessage: (state, action) => {
-      const { conversationUserId, message } = action.payload;
+      const { conversationUserId, message, conversationMeta } = action.payload;
       if (state.currentConversation.userId === conversationUserId) {
         state.currentConversation.messages.push(message);
       }
@@ -189,6 +201,16 @@ const messagesSlice = createSlice({
         state.conversations[conversationIndex].lastMessageTime = message.createdAt;
         const [conversation] = state.conversations.splice(conversationIndex, 1);
         state.conversations.unshift(conversation);
+      } else if (conversationMeta) {
+        state.conversations.unshift({
+          userId: conversationUserId,
+          username: conversationMeta.username,
+          profileImage: conversationMeta.profileImage,
+          lastMessage: message.content,
+          lastMessageTime: message.createdAt,
+          unreadCount: 0,
+          isCurrentUserSender: true
+        });
       }
     },
 

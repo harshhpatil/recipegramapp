@@ -29,6 +29,10 @@ const ChatWindow = ({ conversation, onBack }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
   const typingUser = typing?.[conversation.userId];
+  const lastOwnMessageId = currentConversation.messages
+    .slice()
+    .reverse()
+    .find((message) => message.sender?._id === user?._id)?._id;
 
   // Fetch conversation on load
   useEffect(() => {
@@ -124,24 +128,23 @@ const ChatWindow = ({ conversation, onBack }) => {
       isRead: false,
       status: 'sending',
       parentMessage: replyTo
-        ) : (
+        ? {
             _id: replyTo._id,
             content: replyTo.content,
             sender: replyTo.sender,
             recipient: replyTo.recipient,
             createdAt: replyTo.createdAt
           }
-                onReply={() => setReplyTo(message)}
+        : null
     };
 
-            {typingUser && (
-              <div className="text-xs text-warmGray-500">
-                {typingUser.username} is typing...
-              </div>
-            )}
     dispatch(addOptimisticMessage({
       conversationUserId: conversation.userId,
-      message: optimisticMessage
+      message: optimisticMessage,
+      conversationMeta: {
+        username: conversation.username,
+        profileImage: conversation.profileImage
+      }
     }));
 
     const socket = getSocket();
@@ -168,15 +171,15 @@ const ChatWindow = ({ conversation, onBack }) => {
   return (
     <div className="flex flex-col bg-white h-screen md:h-auto md:flex-1">
       {/* Header */}
-      <div className="border-b border-cream-200 p-4 flex items-center justify-between shrink-0">
+      <div className="border-b border-neutral-200 px-4 py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="md:hidden p-2 hover:bg-cream-100 rounded-lg transition-colors -ml-2"
+            className="md:hidden p-2 hover:bg-neutral-100 rounded-full transition-colors -ml-2"
             title="Back"
           >
             <svg
-              className="w-5 h-5 text-warmGray-600"
+              className="w-5 h-5 text-neutral-700"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -199,16 +202,16 @@ const ChatWindow = ({ conversation, onBack }) => {
             className="w-10 h-10 rounded-full object-cover"
           />
           <div>
-            <h2 className="font-semibold text-warmGray-900">{conversation.username}</h2>
-            <p className="text-xs text-warmGray-500">Active now</p>
+            <h2 className="font-semibold text-neutral-900">{conversation.username}</h2>
+            <p className="text-xs text-neutral-500">Active now</p>
           </div>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-cream-100 rounded-lg transition-colors hidden sm:block" title="Voice call">
+          <button className="p-2 hover:bg-neutral-100 rounded-full transition-colors hidden sm:block" title="Voice call">
             <svg
-              className="w-5 h-5 text-warmGray-600"
+              className="w-5 h-5 text-neutral-700"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -222,9 +225,9 @@ const ChatWindow = ({ conversation, onBack }) => {
             </svg>
           </button>
 
-          <button className="p-2 hover:bg-cream-100 rounded-lg transition-colors hidden sm:block" title="Video call">
+          <button className="p-2 hover:bg-neutral-100 rounded-full transition-colors hidden sm:block" title="Video call">
             <svg
-              className="w-5 h-5 text-warmGray-600"
+              className="w-5 h-5 text-neutral-700"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -241,13 +244,13 @@ const ChatWindow = ({ conversation, onBack }) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-linear-to-b from-cream-50 to-white">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50">
         {loading ? (
           <Loading />
         ) : currentConversation.messages.length === 0 ? (
           <div className="h-full flex items-center justify-center">
             <div className="text-center">
-              <p className="text-warmGray-500">No messages yet. Start the conversation!</p>
+              <p className="text-neutral-500">No messages yet. Start the conversation!</p>
             </div>
           </div>
         ) : (
@@ -258,39 +261,45 @@ const ChatWindow = ({ conversation, onBack }) => {
                 message={message}
                 isOwn={message.sender._id === user._id}
                 onReply={setReplyTo}
+                isLastOwn={message._id === lastOwnMessageId}
               />
             ))}
+            {typingUser && (
+              <div className="text-xs text-neutral-500">
+                {typingUser.username} is typing...
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </>
         )}
       </div>
 
       {/* Input Area */}
-      <form onSubmit={handleSendMessage} className="border-t border-cream-200 p-4 bg-white shrink-0">
+      <form onSubmit={handleSendMessage} className="border-t border-neutral-200 p-3 bg-white shrink-0">
         {replyTo && (
-          <div className="mb-3 px-3 py-2 rounded-lg bg-cream-100 border border-cream-200 flex items-start justify-between gap-3">
-            <div className="text-xs text-warmGray-600">
+          <div className="mb-3 px-3 py-2 rounded-lg bg-neutral-100 border border-neutral-200 flex items-start justify-between gap-3">
+            <div className="text-xs text-neutral-600">
               <span className="font-semibold">Replying to</span>{' '}
               {replyTo.sender?.username || 'message'}: {replyTo.content}
             </div>
             <button
               type="button"
               onClick={() => setReplyTo(null)}
-              className="text-warmGray-500 hover:text-warmGray-700"
+              className="text-neutral-500 hover:text-neutral-700"
               title="Cancel reply"
             >
               x
             </button>
           </div>
         )}
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <button
             type="button"
-            className="p-2 hover:bg-cream-100 rounded-lg transition-colors shrink-0"
+            className="p-2 hover:bg-neutral-100 rounded-full transition-colors shrink-0"
             title="Attach file"
           >
             <svg
-              className="w-5 h-5 text-primary-500"
+              className="w-5 h-5 text-neutral-700"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -319,13 +328,13 @@ const ChatWindow = ({ conversation, onBack }) => {
             }}
             onBlur={() => setIsTyping(false)}
             placeholder="Type a message..."
-            className="input flex-1"
+            className="flex-1 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-200"
           />
 
           <button
             type="submit"
             disabled={!messageContent.trim()}
-            className="btn-primary px-4 shrink-0"
+            className="px-4 py-2 rounded-full bg-sky-500 text-white text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <svg
               className="w-5 h-5"

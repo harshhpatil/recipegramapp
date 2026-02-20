@@ -63,6 +63,16 @@ const Header = () => {
                   Search
                 </Link>
                 <Link 
+                  to="/messages" 
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                    isActivePath('/messages') 
+                      ? 'bg-primary-50 text-primary-700' 
+                      : 'text-warmGray-700 hover:bg-warmGray-50 hover:text-warmGray-900'
+                  }`}
+                >
+                  Messages
+                </Link>
+                <Link 
                   to="/saved" 
                   className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                     isActivePath('/saved') 

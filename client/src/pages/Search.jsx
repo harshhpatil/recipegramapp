@@ -153,16 +153,31 @@ const Search = () => {
                       <span>{user.followingCount || 0} following</span>
                     </p>
                   </div>
-                  <button
-                    onClick={() => handleFollowClick(user._id)}
-                    className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all active:scale-95 ${
-                      isFollowing
-                        ? 'btn-outline'
-                        : 'btn-primary'
-                    }`}
-                  >
-                    {isFollowing ? 'Following' : 'Follow'}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/messages"
+                      state={{
+                        openConversation: {
+                          userId: user._id,
+                          username: user.username,
+                          profileImage: user.profileImage
+                        }
+                      }}
+                      className="px-4 py-2 rounded-lg font-medium border border-cream-200 text-warmGray-700 hover:bg-cream-50"
+                    >
+                      Message
+                    </Link>
+                    <button
+                      onClick={() => handleFollowClick(user._id)}
+                      className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all active:scale-95 ${
+                        isFollowing
+                          ? 'btn-outline'
+                          : 'btn-primary'
+                      }`}
+                    >
+                      {isFollowing ? 'Following' : 'Follow'}
+                    </button>
+                  </div>
                 </div>
               );
             })}

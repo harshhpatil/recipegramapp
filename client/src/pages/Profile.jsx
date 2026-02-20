@@ -129,30 +129,45 @@ const Profile = () => {
                   Edit Profile
                 </button>
               ) : (
-                <button
-                  onClick={handleFollow}
-                  className={`px-6 py-2 rounded-lg font-medium flex items-center gap-2 ${
-                    isFollowing
-                      ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
-                >
-                  {isFollowing ? (
-                    <>
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Following
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      Follow
-                    </>
-                  )}
-                </button>
+                <div className="flex items-center gap-3">
+                  <Link
+                    to="/messages"
+                    state={{
+                      openConversation: {
+                        userId: profile._id,
+                        username: profile.username,
+                        profileImage: profile.profileImage
+                      }
+                    }}
+                    className="px-6 py-2 rounded-lg font-medium border border-gray-300 text-gray-800 hover:bg-gray-50"
+                  >
+                    Message
+                  </Link>
+                  <button
+                    onClick={handleFollow}
+                    className={`px-6 py-2 rounded-lg font-medium flex items-center gap-2 ${
+                      isFollowing
+                        ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                    }`}
+                  >
+                    {isFollowing ? (
+                      <>
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Following
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Follow
+                      </>
+                    )}
+                  </button>
+                </div>
               )}
             </div>
             
