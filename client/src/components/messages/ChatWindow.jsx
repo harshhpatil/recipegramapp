@@ -24,6 +24,7 @@ const ChatWindow = ({ conversation, onBack }) => {
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const lastReadMarkerRef = useRef(null);
+  const hasTypedRef = useRef(false);
   
   const [messageContent, setMessageContent] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -48,6 +49,7 @@ const ChatWindow = ({ conversation, onBack }) => {
 
   // Handle typing indicator
   useEffect(() => {
+    if (!hasTypedRef.current) return;
     if (isTyping) {
       emitTyping(conversation.userId);
     } else {
@@ -318,6 +320,7 @@ const ChatWindow = ({ conversation, onBack }) => {
             value={messageContent}
             onChange={(e) => {
               setMessageContent(e.target.value);
+              hasTypedRef.current = true;
               setIsTyping(true);
               if (typingTimeoutRef.current) {
                 clearTimeout(typingTimeoutRef.current);

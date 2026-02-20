@@ -1,5 +1,6 @@
 import Message from "../models/Message.model.js";
 import User from "../models/User.model.js";
+import mongoose from "mongoose";
 
 /**
  * Send a message
@@ -141,7 +142,7 @@ export const getConversation = async (req, res) => {
  */
 export const getConversations = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = new mongoose.Types.ObjectId(req.user._id);
 
     // Find all unique conversation partners
     const conversations = await Message.aggregate([
