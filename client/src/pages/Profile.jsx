@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUserStart, fetchUserSuccess, fetchUserFailure } from '../store/slices/userSlice';
-import { userService } from '../services';
+import { userService, followService } from '../services';
+import { useFollow } from '../hooks';
 import PostCard from '../components/post/PostCard';
+import EditProfileModal from '../components/user/EditProfileModal';
 
 const Profile = () => {
   const { username } = useParams();
@@ -11,6 +13,9 @@ const Profile = () => {
   const { profile, userPosts, loading } = useSelector((state) => state.user);
   const { user: currentUser } = useSelector((state) => state.auth);
   const [posts, setPosts] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const { toggleFollow } = useFollow();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -32,6 +37,33 @@ const Profile = () => {
     }
   }, [username, dispatch]);
 
+  const isOwnProfile = currentUser?.username === profile?.username;
+
+  useEffect(() => {
+    if (!isOwnProfile && profile?._id) {
+      const checkFollowStatus = async () => {
+        try {
+          const response = await followService.checkIfFollowing(profile._id);
+          setIsFollowing(response.data?.isFollowing || false);
+        } catch (error) {
+          console.error('Error checking follow status:', error);
+        }
+      };
+      checkFollowStatus();
+    }
+  }, [profile?._id, isOwnProfile]);
+
+  const handleFollow = async () => {
+    const result = await toggleFollow(profile._id, isFollowing);
+    if (result.success) {
+      setIsFollowing(result.isFollowing);
+    }
+  };
+
+  const handleEditProfile = () => {
+    setIsEditModalOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -47,8 +79,6 @@ const Profile = () => {
       </div>
     );
   }
-
-  const isOwnProfile = currentUser?.username === profile.username;
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
@@ -66,9 +96,23 @@ const Profile = () => {
           <div className="flex-1">
             <div className="flex items-center gap-4 mb-4">
               <h1 className="text-3xl font-bold">{profile.username}</h1>
-              {isOwnProfile && (
-                <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+              {isOwnProfile ? (
+                <button
+                  onClick={handleEditProfile}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
                   Edit Profile
+                </button>
+              ) : (
+                <button
+                  onClick={handleFollow}
+                  className={`px-6 py-2 rounded-lg font-medium ${
+                    isFollowing
+                      ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                >
+                  {isFollowing ? 'Unfollow' : 'Follow'}
                 </button>
               )}
             </div>
@@ -104,6 +148,14 @@ const Profile = () => {
           ))
         )}
       </div>
+
+      {isEditModalOpen && (
+        <EditProfileModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          currentProfile={profile}
+        />
+      )}
     </div>
   );
 };
