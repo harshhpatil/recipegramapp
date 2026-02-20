@@ -14,8 +14,8 @@ app.use(corsMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Apply rate limiting to all routes
-app.use(apiLimiter);
+// Note: Route-specific rate limiters (authLimiter, searchLimiter, createPostLimiter) 
+// are applied directly to their respective routes for targeted protection
 app.use('/auth', authRoutes);
 
 

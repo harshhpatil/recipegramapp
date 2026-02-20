@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "test:integration": "vitest run src/__tests__/integration"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
