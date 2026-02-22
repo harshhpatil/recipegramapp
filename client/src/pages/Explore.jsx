@@ -64,7 +64,7 @@ const Explore = () => {
         <p className="text-warmGray-600 text-lg">Discover trending recipes and search for new ideas</p>
         
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex gap-2 mt-6">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 mt-6">
           <div className="relative flex-1">
             <input
               type="text"
@@ -86,7 +86,7 @@ const Explore = () => {
             <button
               type="button"
               onClick={clearSearch}
-              className="btn-outline"
+              className="btn-outline w-full sm:w-auto"
             >
               Clear
             </button>
@@ -94,7 +94,7 @@ const Explore = () => {
             <button
               type="submit"
               disabled={searching || !searchQuery.trim()}
-              className="btn-primary"
+              className="btn-primary w-full sm:w-auto"
             >
               {searching ? 'Searching...' : 'Search'}
             </button>
@@ -134,22 +134,22 @@ const Explore = () => {
           <PostCardSkeleton />
         </div>
       ) : displayPosts.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg shadow-md">
+        <div className="text-center py-12 card">
           <div className="mb-4">
-            <svg className="w-24 h-24 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-24 h-24 mx-auto text-warmGray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">
+          <h3 className="text-xl font-semibold text-warmGray-700 mb-2">
             {isSearchActive ? 'No recipes found' : 'No trending recipes yet'}
           </h3>
-          <p className="text-gray-500 mb-4">
+          <p className="text-warmGray-500 mb-4">
             {isSearchActive ? `No recipes match "${searchQuery}"` : 'Check back later for trending content'}
           </p>
           {isSearchActive && (
             <button
               onClick={clearSearch}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              className="btn-primary"
             >
               View All Trending
             </button>

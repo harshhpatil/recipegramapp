@@ -1,7 +1,7 @@
 const typeStyles = {
-  success: 'bg-green-500',
-  error: 'bg-red-500',
-  info: 'bg-blue-500',
+  success: 'bg-success-600',
+  error: 'bg-error-600',
+  info: 'bg-info-600',
 };
 
 const Toast = ({ toasts }) => {
@@ -12,7 +12,7 @@ const Toast = ({ toasts }) => {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`${typeStyles[toast.type] || typeStyles.info} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 min-w-[300px] animate-slide-in`}
+          className={`${typeStyles[toast.type] || typeStyles.info} text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 min-w-[260px] sm:min-w-[300px] animate-slide-in border border-white/20`}
         >
           {toast.type === 'success' && (
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,4 +37,3 @@ const Toast = ({ toasts }) => {
 };
 
 export default Toast;
-

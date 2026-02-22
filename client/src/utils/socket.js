@@ -1,52 +1,64 @@
 import { io } from "socket.io-client";
 
 let socket = null;
+let activeToken = null;
+
+const buildSocketUrl = () => {
+  const rawUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  return rawUrl.replace(/\/api\/?$/, "");
+};
+
+const createNoopSocket = () => ({
+  on: () => {},
+  off: () => {},
+  emit: () => {},
+  disconnect: () => {}
+});
 
 /**
  * Initialize socket connection
  */
 export const initializeSocket = (token) => {
   try {
-    if (socket) {
+    if (socket && activeToken === token) {
       return socket;
     }
 
-    const SOCKET_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    if (socket) {
+      socket.disconnect();
+      socket = null;
+    }
 
-    socket = io(SOCKET_URL, {
-    auth: {
-      token: token
-    },
-    reconnection: true,
-    reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-    reconnectionAttempts: 5
-  });
+    const socketUrl = buildSocketUrl();
+    activeToken = token || null;
 
-  socket.on("connect", () => {
-    console.log("Socket connected:", socket.id);
-    // Join user's personal room
-    socket.emit("join_room", { });
-  });
+    socket = io(socketUrl, {
+      auth: {
+        token: token || null
+      },
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 5
+    });
 
-  socket.on("connect_error", (error) => {
-    console.error("Socket connection error:", error);
-  });
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      socket.emit("join_room", {});
+    });
 
-  socket.on("disconnect", (reason) => {
-    console.log("Socket disconnected:", reason);
-  });
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("Socket disconnected:", reason);
+    });
 
     return socket;
   } catch (error) {
     console.error("Failed to initialize socket:", error);
-    // Return a mock socket that doesn't throw on method calls
-    return {
-      on: () => {},
-      off: () => {},
-      emit: () => {},
-      disconnect: () => {}
-    };
+    return createNoopSocket();
   }
 };
 
@@ -64,6 +76,7 @@ export const disconnectSocket = () => {
   if (socket) {
     socket.disconnect();
     socket = null;
+    activeToken = null;
   }
 };
 

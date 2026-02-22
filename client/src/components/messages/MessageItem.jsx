@@ -9,16 +9,16 @@ const MessageItem = ({ message, isOwn, onReply, isLastOwn }) => {
         <div
           className={`max-w-xs lg:max-w-md xxl:max-w-lg px-4 py-2 rounded-3xl ${
             isOwn
-              ? 'bg-sky-500 text-white rounded-br-md'
-              : 'bg-neutral-200 text-neutral-900 rounded-bl-md'
+              ? 'bg-primary-500 text-white rounded-br-md'
+              : 'bg-cream-200 text-warmGray-900 rounded-bl-md border border-cream-300'
           } break-words`}
         >
           {message.parentMessage && (
             <div
               className={`mb-2 px-2 py-1 rounded-lg text-xs border ${
                 isOwn
-                  ? 'bg-sky-600 border-sky-400 text-sky-50'
-                  : 'bg-neutral-100 border-neutral-300 text-neutral-600'
+                  ? 'bg-primary-600 border-primary-400 text-primary-50'
+                  : 'bg-cream-100 border-cream-300 text-warmGray-600'
               }`}
             >
               <span className="font-semibold">
@@ -38,14 +38,14 @@ const MessageItem = ({ message, isOwn, onReply, isLastOwn }) => {
         </div>
 
         <div className={`mt-1 flex items-center gap-3 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-          <p className={`text-xs ${isOwn ? 'text-neutral-500' : 'text-neutral-500'}`}>
+          <p className="text-xs text-warmGray-500">
             {formatDistanceToNow(new Date(message.createdAt))}
           </p>
           {onReply && (
             <button
               type="button"
               onClick={() => onReply(message)}
-              className={`text-xs ${isOwn ? 'text-neutral-500 hover:text-neutral-700' : 'text-neutral-500 hover:text-neutral-700'}`}
+              className="text-xs text-warmGray-500 hover:text-warmGray-700"
             >
               Reply
             </button>
@@ -53,7 +53,7 @@ const MessageItem = ({ message, isOwn, onReply, isLastOwn }) => {
         </div>
 
         {showSeen && (
-          <div className="mt-1 text-xs text-neutral-400">Seen</div>
+          <div className="mt-1 text-xs text-warmGray-400">Seen</div>
         )}
       </div>
     </div>

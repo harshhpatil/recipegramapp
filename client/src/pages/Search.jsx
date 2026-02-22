@@ -132,7 +132,7 @@ const Search = () => {
               const isFollowing = followStates[user._id] || false;
 
               return (
-                <div key={user._id} className="card p-5 flex items-center gap-4 group">
+                <div key={user._id} className="card p-5 flex items-center gap-4 group flex-wrap sm:flex-nowrap">
                   <Link to={`/profile/${user.username}`}>
                     <div className="avatar w-16 h-16 text-xl transition-transform group-hover:scale-105">
                       {user.profileImage ? (
@@ -153,7 +153,7 @@ const Search = () => {
                       <span>{user.followingCount || 0} following</span>
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
                     <Link
                       to="/messages"
                       state={{
@@ -163,13 +163,13 @@ const Search = () => {
                           profileImage: user.profileImage
                         }
                       }}
-                      className="px-4 py-2 rounded-lg font-medium border border-cream-200 text-warmGray-700 hover:bg-cream-50"
+                      className="px-4 py-2 rounded-lg font-medium border border-cream-200 text-warmGray-700 hover:bg-cream-50 text-center flex-1 sm:flex-none"
                     >
                       Message
                     </Link>
                     <button
                       onClick={() => handleFollowClick(user._id)}
-                      className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all active:scale-95 ${
+                      className={`px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all active:scale-95 flex-1 sm:flex-none ${
                         isFollowing
                           ? 'btn-outline'
                           : 'btn-primary'

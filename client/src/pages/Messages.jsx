@@ -50,16 +50,16 @@ const Messages = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-neutral-50">
+    <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row bg-cream-50">
       {/* Conversations List - Hidden on mobile when chat is open */}
       {!selectedConversation && (
-        <div className="w-full md:w-80 border-r border-neutral-200 bg-white flex flex-col">
-          <div className="p-4 border-b border-neutral-200">
+        <div className="w-full md:w-80 border-r border-cream-300 bg-cream-100 flex flex-col">
+          <div className="p-4 border-b border-cream-300">
             <div className="flex items-center justify-between">
-              <h1 className="text-xl font-semibold text-neutral-900">Messages</h1>
+              <h1 className="text-xl font-semibold text-warmGray-900">Messages</h1>
               <button
                 type="button"
-                className="text-sm text-neutral-500 hover:text-neutral-700"
+                className="text-sm text-warmGray-500 hover:text-warmGray-700"
               >
                 Requests
               </button>
@@ -81,10 +81,10 @@ const Messages = () => {
           onBack={handleBackToList}
         />
       ) : (
-        <div className="hidden md:flex flex-1 items-center justify-center bg-neutral-50">
+        <div className="hidden md:flex flex-1 items-center justify-center bg-cream-50">
           <div className="text-center">
             <svg
-              className="w-24 h-24 mx-auto text-neutral-300 mb-4"
+              className="w-24 h-24 mx-auto text-warmGray-300 mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -96,10 +96,10 @@ const Messages = () => {
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
-            <h2 className="text-2xl font-semibold text-neutral-700 mb-2">
+            <h2 className="text-2xl font-semibold text-warmGray-700 mb-2">
               Select a conversation
             </h2>
-            <p className="text-neutral-500">
+            <p className="text-warmGray-500">
               Choose a conversation to start messaging
             </p>
           </div>
@@ -110,4 +110,3 @@ const Messages = () => {
 };
 
 export default Messages;
-

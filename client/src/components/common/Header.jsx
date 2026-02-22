@@ -1,13 +1,27 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../hooks';
 
 const Header = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const { logout } = useAuth();
   const location = useLocation();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
   const isActivePath = (path) => location.pathname === path;
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className="glass sticky top-0 z-50 border-b border-cream-300/50 backdrop-blur-md">
@@ -72,40 +86,56 @@ const Header = () => {
                 >
                   Messages
                 </Link>
-                <Link 
-                  to="/saved" 
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    isActivePath('/saved') 
-                      ? 'bg-primary-50 text-primary-700' 
-                      : 'text-warmGray-700 hover:bg-warmGray-50 hover:text-warmGray-900'
-                  }`}
-                >
-                  Saved
-                </Link>
                 <div className="w-px h-6 bg-cream-300 mx-2" />
-                <Link 
-                  to="/profile/me" 
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-warmGray-700 hover:bg-warmGray-50 transition-all duration-200"
-                >
-                  <div className="avatar w-8 h-8 text-xs">
-                    {user?.profileImage ? (
-                      <img 
-                        src={user.profileImage} 
-                        alt={user.username} 
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    ) : (
-                      user?.username?.charAt(0).toUpperCase()
-                    )}
-                  </div>
-                  <span className="hidden lg:inline">Profile</span>
-                </Link>
-                <button
-                  onClick={logout}
-                  className="ml-2 px-4 py-2 bg-warmGray-100 text-warmGray-700 rounded-lg font-medium hover:bg-warmGray-200 transition-all duration-200 active:scale-95"
-                >
-                  Logout
-                </button>
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-warmGray-700 hover:bg-warmGray-50 transition-all duration-200"
+                  >
+                    <div className="avatar w-8 h-8 text-xs">
+                      {user?.profileImage ? (
+                        <img 
+                          src={user.profileImage} 
+                          alt={user.username} 
+                          className="w-full h-full rounded-full object-cover"
+                        />
+                      ) : (
+                        user?.username?.charAt(0).toUpperCase()
+                      )}
+                    </div>
+                    <span className="hidden lg:inline">{user?.username || 'Account'}</span>
+                    <svg className="w-4 h-4 text-warmGray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {isUserMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-44 card p-2 z-50">
+                      <Link
+                        to="/profile/me"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-sm text-warmGray-700 hover:bg-warmGray-50"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        to="/saved"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-sm text-warmGray-700 hover:bg-warmGray-50"
+                      >
+                        Saved Recipes
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          logout();
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-lg text-sm text-error-600 hover:bg-error-50"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <>

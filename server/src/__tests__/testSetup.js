@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let mongoServer;
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-secret';
 
 export const connectTestDB = async () => {
   mongoServer = await MongoMemoryServer.create();

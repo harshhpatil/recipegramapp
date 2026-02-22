@@ -58,6 +58,9 @@ vi.mock('../../hooks', () => ({
     fetchPosts: vi.fn().mockResolvedValue({ success: true }),
     deletePost: vi.fn(),
   }),
+  useFeed: () => ({
+    fetchFeed: vi.fn().mockResolvedValue({ success: true, posts: [] }),
+  }),
 }));
 
 // ─── Test data ────────────────────────────────────────────────────────────────

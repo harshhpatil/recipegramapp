@@ -7,8 +7,8 @@ const Loading = ({ size = 'md', text = 'Loading...' }) => {
 
   return (
     <div className="flex flex-col items-center justify-center p-8">
-      <div className={`${sizeClasses[size]} border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin`}></div>
-      {text && <p className="mt-4 text-gray-600">{text}</p>}
+      <div className={`${sizeClasses[size]} border-4 border-cream-300 border-t-primary-500 rounded-full animate-spin`}></div>
+      {text && <p className="mt-4 text-warmGray-600">{text}</p>}
     </div>
   );
 };

@@ -11,6 +11,9 @@ vi.mock('../hooks', () => ({
   usePosts: () => ({
     fetchPosts: vi.fn().mockResolvedValue({ success: true }),
   }),
+  useFeed: () => ({
+    fetchFeed: vi.fn().mockResolvedValue({ success: true, posts: [] }),
+  }),
 }));
 
 const createMockStore = (initialState = {}) => {

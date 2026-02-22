@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 
 const UserCard = ({ user, showFollowButton = false, onFollow }) => {
   return (
-    <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-md">
+    <div className="card flex items-center gap-4 p-4">
       <Link to={`/profile/${user.username}`}>
-        <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center font-bold text-gray-600">
+        <div className="w-12 h-12 bg-warmGray-200 rounded-full flex items-center justify-center font-bold text-warmGray-600">
           {user.profileImage ? (
             <img 
               src={user.profileImage} 
@@ -18,18 +18,18 @@ const UserCard = ({ user, showFollowButton = false, onFollow }) => {
       </Link>
 
       <div className="flex-1">
-        <Link to={`/profile/${user.username}`} className="font-semibold hover:underline">
+        <Link to={`/profile/${user.username}`} className="font-semibold text-warmGray-900 hover:underline">
           {user.username}
         </Link>
         {user.bio && (
-          <p className="text-sm text-gray-600 truncate">{user.bio}</p>
+          <p className="text-sm text-warmGray-600 truncate">{user.bio}</p>
         )}
       </div>
 
       {showFollowButton && (
         <button
           onClick={() => onFollow && onFollow(user._id)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+          className="btn-primary text-sm"
         >
           Follow
         </button>

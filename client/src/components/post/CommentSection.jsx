@@ -6,6 +6,7 @@ const CommentSection = ({ postId, comments, setComments }) => {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const { isAuthenticated, user: currentUser } = useSelector((state) => state.auth);
 
   // Ensure comments is always an array
@@ -39,20 +40,24 @@ const CommentSection = ({ postId, comments, setComments }) => {
   };
 
   const handleDelete = async (commentId) => {
-    if (!window.confirm('Are you sure you want to delete this comment?')) return;
+    if (confirmDeleteId !== commentId) {
+      setConfirmDeleteId(commentId);
+      return;
+    }
 
     try {
       await commentService.deleteComment(commentId);
       setComments(safeComments.filter(c => c._id !== commentId));
+      setConfirmDeleteId(null);
     } catch (error) {
       console.error('Error deleting comment:', error);
-      alert(error.response?.data?.message || 'Failed to delete comment');
+      setError(error.response?.data?.message || 'Failed to delete comment');
     }
   };
 
   return (
-    <div className="mt-6 border-t pt-4">
-      <h3 className="font-semibold mb-4">Comments</h3>
+    <div className="mt-6 border-t border-cream-300 pt-4">
+      <h3 className="font-semibold text-warmGray-900 mb-4">Comments</h3>
 
       {isAuthenticated && (
         <form onSubmit={handleSubmit} className="mb-6">
@@ -62,32 +67,32 @@ const CommentSection = ({ postId, comments, setComments }) => {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Add a comment..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input flex-1"
               maxLength={500}
             />
             <button
               type="submit"
               disabled={loading || !newComment.trim()}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Posting...' : 'Post'}
             </button>
           </div>
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          <p className="text-xs text-gray-500 mt-1">{newComment.length}/500 characters</p>
+          {error && <p className="text-error-500 text-sm mt-2">{error}</p>}
+          <p className="text-xs text-warmGray-500 mt-1">{newComment.length}/500 characters</p>
         </form>
       )}
 
       <div className="space-y-4">
         {safeComments.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
+          <p className="text-warmGray-500 text-center py-4">No comments yet. Be the first to comment!</p>
         ) : (
           safeComments.map((comment) => {
             const isCommentAuthor = currentUser && comment.user?._id === currentUser._id;
             
             return (
               <div key={comment._id} className="flex gap-3">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center font-bold text-gray-600 text-sm shrink-0">
+                <div className="w-8 h-8 bg-warmGray-200 rounded-full flex items-center justify-center font-bold text-warmGray-600 text-sm shrink-0">
                   {comment.user?.profileImage ? (
                     <img 
                       src={comment.user.profileImage} 
@@ -99,22 +104,33 @@ const CommentSection = ({ postId, comments, setComments }) => {
                   )}
                 </div>
                 <div className="flex-1">
-                  <div className="bg-gray-100 rounded-lg px-4 py-2">
+                  <div className="bg-cream-200 rounded-lg px-4 py-2 border border-cream-300">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-sm">{comment.user?.username}</span>
+                      <span className="font-semibold text-sm text-warmGray-900">{comment.user?.username}</span>
                       {isCommentAuthor && (
-                        <button
-                          onClick={() => handleDelete(comment._id)}
-                          className="text-red-500 hover:text-red-700 text-xs"
-                          title="Delete comment"
-                        >
-                          Delete
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleDelete(comment._id)}
+                            className="text-error-500 hover:text-error-600 text-xs"
+                            title="Delete comment"
+                          >
+                            {confirmDeleteId === comment._id ? 'Confirm' : 'Delete'}
+                          </button>
+                          {confirmDeleteId === comment._id && (
+                            <button
+                              onClick={() => setConfirmDeleteId(null)}
+                              className="text-warmGray-500 hover:text-warmGray-700 text-xs"
+                              title="Cancel delete"
+                            >
+                              Cancel
+                            </button>
+                          )}
+                        </div>
                       )}
                     </div>
-                    <p className="text-gray-700 mt-1">{comment.text}</p>
+                    <p className="text-warmGray-700 mt-1">{comment.text}</p>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1 px-4">
+                  <div className="text-xs text-warmGray-500 mt-1 px-4">
                     {new Date(comment.createdAt).toLocaleDateString()}
                   </div>
                 </div>

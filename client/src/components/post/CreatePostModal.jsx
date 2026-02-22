@@ -112,14 +112,14 @@ const CreatePostModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-warmGray-900/45 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Create New Recipe Post</h2>
+            <h2 className="text-2xl font-semibold text-warmGray-900">Create New Recipe Post</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl"
+              className="text-warmGray-500 hover:text-warmGray-700 text-2xl"
               disabled={loading}
             >
               ×
@@ -127,7 +127,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-4 p-3 card bg-error-50 border-error-200 text-error-700 rounded">
               {error}
             </div>
           )}
@@ -135,7 +135,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Image URL */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-warmGray-700 mb-2">
                 Image URL *
               </label>
               <input
@@ -143,12 +143,12 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                 value={image}
                 onChange={handleImageChange}
                 placeholder="https://example.com/image.jpg"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
                 disabled={loading}
                 required
               />
               {imageError && (
-                <p className="mt-1 text-sm text-red-600">{imageError}</p>
+                <p className="mt-1 text-sm text-error-600">{imageError}</p>
               )}
               {imagePreview && (
                 <div className="mt-2">
@@ -167,7 +167,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
 
             {/* Caption */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-warmGray-700 mb-2">
                 Caption *
               </label>
               <textarea
@@ -175,7 +175,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                 onChange={(e) => setCaption(e.target.value)}
                 placeholder="Describe your recipe..."
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
                 disabled={loading}
                 required
               />
@@ -183,7 +183,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
 
             {/* Ingredients */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-warmGray-700 mb-2">
                 Ingredients
               </label>
               {ingredients.map((ingredient, index) => (
@@ -193,14 +193,14 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                     value={ingredient}
                     onChange={(e) => updateIngredient(index, e.target.value)}
                     placeholder={`Ingredient ${index + 1}`}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input flex-1"
                     disabled={loading}
                   />
                   {ingredients.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeIngredient(index)}
-                      className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                      className="px-3 py-2 bg-error-500 text-white rounded-md hover:bg-error-600"
                       disabled={loading}
                     >
                       ×
@@ -211,7 +211,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={addIngredient}
-                className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
                 disabled={loading}
               >
                 + Add Ingredient
@@ -220,12 +220,12 @@ const CreatePostModal = ({ isOpen, onClose }) => {
 
             {/* Steps */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-warmGray-700 mb-2">
                 Cooking Steps
               </label>
               {steps.map((step, index) => (
                 <div key={index} className="flex gap-2 mb-2">
-                  <span className="flex items-center px-3 py-2 bg-gray-100 rounded-md font-medium">
+                  <span className="flex items-center px-3 py-2 bg-cream-200 rounded-md font-medium text-warmGray-700">
                     {index + 1}.
                   </span>
                   <textarea
@@ -233,14 +233,14 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                     onChange={(e) => updateStep(index, e.target.value)}
                     placeholder={`Step ${index + 1}`}
                     rows={2}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input flex-1"
                     disabled={loading}
                   />
                   {steps.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeStep(index)}
-                      className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                      className="px-3 py-2 bg-error-500 text-white rounded-md hover:bg-error-600"
                       disabled={loading}
                     >
                       ×
@@ -251,7 +251,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={addStep}
-                className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
                 disabled={loading}
               >
                 + Add Step
@@ -263,7 +263,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="flex-1 btn-primary disabled:bg-warmGray-400 disabled:cursor-not-allowed"
               >
                 {loading ? 'Creating...' : 'Create Post'}
               </button>
@@ -271,7 +271,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                 type="button"
                 onClick={onClose}
                 disabled={loading}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-warmGray-200 text-warmGray-700 rounded-md hover:bg-warmGray-300 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>

@@ -17,8 +17,8 @@ const PostCard = ({ post }) => {
           likeService.checkIfLiked(post._id),
           saveService.checkIfSaved(post._id),
         ]);
-        setIsLiked(likeResponse.data?.isLiked || likeResponse.isLiked || false);
-        setIsSaved(saveResponse.data?.isSaved || saveResponse.isSaved || false);
+        setIsLiked(likeResponse?.data?.isLiked || likeResponse?.isLiked || false);
+        setIsSaved(saveResponse?.data?.isSaved || saveResponse?.isSaved || false);
       } catch (error) {
         console.error('Error checking status:', error);
       }
@@ -92,7 +92,7 @@ const PostCard = ({ post }) => {
         <img 
           src={post.image} 
           alt={post.caption} 
-          className="w-full h-96 object-cover cursor-pointer transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-72 sm:h-80 md:h-96 object-cover cursor-pointer transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
         {/* Subtle gradient overlay on hover */}
