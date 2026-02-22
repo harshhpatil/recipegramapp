@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import logger from "../utils/logger";
 import {
   addReceivedMessage,
   acknowledgeMessageSent,
@@ -45,7 +46,7 @@ export const useSocket = (token) => {
             dispatch(incrementUnreadCount());
           }
         } catch (error) {
-          console.error("Error handling receive_message:", error);
+          logger.error("Error handling receive_message:", error);
         }
       });
 
@@ -62,7 +63,7 @@ export const useSocket = (token) => {
             );
           }
         } catch (error) {
-          console.error("Error handling message_sent:", error);
+          logger.error("Error handling message_sent:", error);
         }
       });
 
@@ -76,16 +77,16 @@ export const useSocket = (token) => {
             })
           );
         } catch (error) {
-          console.error("Error handling message_delivered:", error);
+          logger.error("Error handling message_delivered:", error);
         }
       });
 
       // Event: Message error
       socket.on("message_error", (data) => {
         try {
-          console.error("Message error:", data);
+          logger.error("Message error:", data);
         } catch (error) {
-          console.error("Error handling message_error:", error);
+          logger.error("Error handling message_error:", error);
         }
       });
 
@@ -94,7 +95,7 @@ export const useSocket = (token) => {
         try {
           dispatch(setUserTyping(data));
         } catch (error) {
-          console.error("Error handling user_typing:", error);
+          logger.error("Error handling user_typing:", error);
         }
       });
 
@@ -103,7 +104,7 @@ export const useSocket = (token) => {
         try {
           dispatch(clearUserTyping(data));
         } catch (error) {
-          console.error("Error handling user_stopped_typing:", error);
+          logger.error("Error handling user_stopped_typing:", error);
         }
       });
 
@@ -112,7 +113,7 @@ export const useSocket = (token) => {
         try {
           dispatch(setUserOnline(data));
         } catch (error) {
-          console.error("Error handling user_online:", error);
+          logger.error("Error handling user_online:", error);
         }
       });
 
@@ -121,7 +122,7 @@ export const useSocket = (token) => {
         try {
           dispatch(setUserOffline(data));
         } catch (error) {
-          console.error("Error handling user_offline:", error);
+          logger.error("Error handling user_offline:", error);
         }
       });
 
@@ -130,7 +131,7 @@ export const useSocket = (token) => {
         try {
           dispatch(updateConversation(data));
         } catch (error) {
-          console.error("Error handling conversation_updated:", error);
+          logger.error("Error handling conversation_updated:", error);
         }
       });
 
@@ -139,7 +140,7 @@ export const useSocket = (token) => {
         try {
           dispatch(markMessageReadWebSocket(data));
         } catch (error) {
-          console.error("Error handling message_read:", error);
+          logger.error("Error handling message_read:", error);
         }
       });
 
@@ -147,34 +148,34 @@ export const useSocket = (token) => {
         try {
           dispatch(markMessagesRead(data));
         } catch (error) {
-          console.error("Error handling messages_read:", error);
+          logger.error("Error handling messages_read:", error);
         }
       });
 
       // Event: Incoming call
       socket.on("incoming_call", (data) => {
         try {
-          console.log("Incoming call:", data);
+          logger.log("Incoming call:", data);
         } catch (error) {
-          console.error("Error handling incoming_call:", error);
+          logger.error("Error handling incoming_call:", error);
         }
       });
 
       // Event: Call accepted
       socket.on("call_accepted", (data) => {
         try {
-          console.log("Call accepted:", data);
+          logger.log("Call accepted:", data);
         } catch (error) {
-          console.error("Error handling call_accepted:", error);
+          logger.error("Error handling call_accepted:", error);
         }
       });
 
       // Event: Call ended
       socket.on("call_ended", (data) => {
         try {
-          console.log("Call ended:", data);
+          logger.log("Call ended:", data);
         } catch (error) {
-          console.error("Error handling call_ended:", error);
+          logger.error("Error handling call_ended:", error);
         }
       });
 
@@ -196,7 +197,7 @@ export const useSocket = (token) => {
         socket.off("call_ended");
       };
     } catch (error) {
-      console.error("Error initializing socket:", error);
+      logger.error("Error initializing socket:", error);
       // Return empty cleanup function if initialization fails
       return () => {};
     }

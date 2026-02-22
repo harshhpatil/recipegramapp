@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import logger from '../utils/logger';
 import {
   fetchFeedStart,
   fetchFeedSuccess,
@@ -21,9 +22,6 @@ export const useFeed = () => {
       dispatch(fetchFeedStart());
       
       const response = await postService.getFeed(page);
-      
-      console.log(`[useFeed] Fetching feed page ${page}, reset: ${reset}`);
-      console.log("Feed API Response:", response);
 
       // Backend returns { page, limit, total, totalPages, posts }
       const postsArray = response.data?.posts || response.posts || [];
@@ -39,7 +37,7 @@ export const useFeed = () => {
       return { success: true, posts: postsArray };
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message || "Failed to fetch feed";
-      console.error("Feed Hook Error:", errorMsg);
+      logger.error("Failed to fetch feed:", errorMsg);
       
       dispatch(fetchFeedFailure(errorMsg));
       return { success: false, error: errorMsg };
