@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import logger from '../utils/logger';
 import {
   fetchPostsStart,
   fetchPostsSuccess,
@@ -21,12 +22,8 @@ export const usePosts = () => {
       dispatch(fetchPostsStart());
       
       const response = await postService.getAllPosts(page);
-      
-      console.log(`[usePosts] Fetching page ${page}, reset: ${reset}`);
-      console.log("API Response:", response);
 
       // Backend returns { page, limit, total, totalPages, posts }
-      // Access the 'posts' property from response.data
       const postsArray = response.data?.posts || response.posts || [];
       const hasMore = response.data?.page < response.data?.totalPages || false;
 
@@ -40,7 +37,7 @@ export const usePosts = () => {
       return { success: true };
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message || "Failed to fetch posts";
-      console.error("Hook Error Caught:", errorMsg);
+      logger.error("Failed to fetch posts:", errorMsg);
       
       dispatch(fetchPostsFailure(errorMsg));
       return { success: false, error: errorMsg };

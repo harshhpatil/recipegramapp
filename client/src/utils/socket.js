@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import logger from "./logger";
 
 let socket = null;
 let activeToken = null;
@@ -43,21 +44,21 @@ export const initializeSocket = (token) => {
     });
 
     socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
+      logger.log("Socket connected:", socket.id);
       socket.emit("join_room", {});
     });
 
     socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
+      logger.error("Socket connection error:", error);
     });
 
     socket.on("disconnect", (reason) => {
-      console.log("Socket disconnected:", reason);
+      logger.log("Socket disconnected:", reason);
     });
 
     return socket;
   } catch (error) {
-    console.error("Failed to initialize socket:", error);
+    logger.error("Failed to initialize socket:", error);
     return createNoopSocket();
   }
 };

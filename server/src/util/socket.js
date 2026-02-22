@@ -2,14 +2,21 @@ import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 import User from "../models/User.model.js";
 import Message from "../models/Message.model.js";
+import logger from "./logger.js";
 
 // Store active connections
 const activeUsers = new Map(); // userId -> socketId
 
 /**
  * Initialize Socket.IO server
+ * Throws if JWT_SECRET is not set — the server must not start without it.
  */
 export const initializeSocket = (httpServer) => {
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
+    throw new Error("JWT_SECRET environment variable is required but not set");
+  }
+
   const io = new Server(httpServer, {
     cors: {
       origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -28,7 +35,7 @@ export const initializeSocket = (httpServer) => {
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || "your_secret_key");
+      const decoded = jwt.verify(token, jwtSecret);
       socket.userId = decoded.userId;
       const user = await User.findById(decoded.userId).select('username').lean();
       if (!user) return next(new Error('User not found'));
@@ -43,7 +50,7 @@ export const initializeSocket = (httpServer) => {
    * Connection handler
    */
   io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.userId} (${socket.id})`);
+    logger.log(`User connected: ${socket.userId} (${socket.id})`);
     
     // Store user's socket ID
     activeUsers.set(socket.userId, socket.id);
@@ -60,7 +67,7 @@ export const initializeSocket = (httpServer) => {
     socket.on("join_room", (data) => {
       const roomName = `user_${socket.userId}`;
       socket.join(roomName);
-      console.log(`${socket.userId} joined room: ${roomName}`);
+      logger.log(`${socket.userId} joined room: ${roomName}`);
     });
 
     /**
@@ -142,7 +149,7 @@ export const initializeSocket = (httpServer) => {
           lastMessageTime: message.createdAt
         });
       } catch (err) {
-        console.error("Send message error:", err);
+        logger.error("Send message error:", err);
         socket.emit("message_error", { 
           message: "Failed to send message",
           error: err.message 
@@ -194,7 +201,7 @@ export const initializeSocket = (httpServer) => {
           });
         }
       } catch (err) {
-        console.error("Mark as read error:", err);
+        logger.error("Mark as read error:", err);
       }
     });
 
@@ -227,7 +234,7 @@ export const initializeSocket = (httpServer) => {
           messageIds
         });
       } catch (err) {
-        console.error("Mark conversation read error:", err);
+        logger.error("Mark conversation read error:", err);
       }
     });
 
@@ -277,7 +284,7 @@ export const initializeSocket = (httpServer) => {
      * Disconnect handler
      */
     socket.on("disconnect", () => {
-      console.log(`User disconnected: ${socket.userId}`);
+      logger.log(`User disconnected: ${socket.userId}`);
 
       // Remove from active users
       activeUsers.delete(socket.userId);
@@ -290,7 +297,7 @@ export const initializeSocket = (httpServer) => {
 
     // Error handler
     socket.on("error", (error) => {
-      console.error(`Socket error for user ${socket.userId}:`, error);
+      logger.error(`Socket error for user ${socket.userId}:`, error);
     });
   });
 
